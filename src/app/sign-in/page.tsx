@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/browser";
 import { env } from "@/lib/env";
 import { Logo } from "@/components/logo";
 import { Button, Card, Input, Label } from "@/components/ui";
+import { PasswordInput } from "@/components/password-input";
 import Link from "next/link";
 
 function SignInInner() {
@@ -67,7 +68,7 @@ function SignInInner() {
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" required autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Your password" />
+              <PasswordInput id="password" required autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Your password" />
             </div>
             {error && <div className="text-sm text-[var(--accent)]">{error}</div>}
             {unconfirmed && (

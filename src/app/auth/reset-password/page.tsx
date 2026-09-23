@@ -2,7 +2,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "motion/react";
-import { Button, Card, Input, Label } from "@/components/ui";
+import { Button, Card, Label } from "@/components/ui";
+import { PasswordInput } from "@/components/password-input";
 import { Logo } from "@/components/logo";
 import { createClient } from "@/lib/supabase/browser";
 
@@ -36,8 +37,8 @@ export default function ResetPassword() {
         </div>
         <Card>
           <form onSubmit={submit} className="space-y-4">
-            <div className="space-y-1.5"><Label htmlFor="p1">New password</Label><Input id="p1" type="password" required minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} /></div>
-            <div className="space-y-1.5"><Label htmlFor="p2">Confirm password</Label><Input id="p2" type="password" required minLength={8} value={confirm} onChange={(e) => setConfirm(e.target.value)} /></div>
+            <div className="space-y-1.5"><Label htmlFor="p1">New password</Label><PasswordInput id="p1" required minLength={8} autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="At least 8 characters" /></div>
+            <div className="space-y-1.5"><Label htmlFor="p2">Confirm password</Label><PasswordInput id="p2" required minLength={8} autoComplete="new-password" value={confirm} onChange={(e) => setConfirm(e.target.value)} /></div>
             {error && <div className="text-sm text-[var(--accent)]">{error}</div>}
             <Button type="submit" size="lg" className="w-full" disabled={saving}>{saving ? "Saving" : "Update password"}</Button>
           </form>
