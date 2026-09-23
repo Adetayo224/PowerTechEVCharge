@@ -47,7 +47,7 @@ export async function middleware(req: NextRequest) {
   if (user && (path === "/sign-in" || path === "/sign-up" || path === "/")) {
     const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).maybeSingle();
     const url = req.nextUrl.clone();
-    url.pathname = profile?.role === "operator" ? "/operator/dashboard" : "/driver/map";
+    url.pathname = profile?.role === "operator" ? "/operator/dashboard" : "/driver/home";
     url.search = "";
     return NextResponse.redirect(url);
   }
@@ -56,7 +56,7 @@ export async function middleware(req: NextRequest) {
     const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).maybeSingle();
     if (profile?.role !== "operator") {
       const url = req.nextUrl.clone();
-      url.pathname = "/driver/map";
+      url.pathname = "/driver/home";
       return NextResponse.redirect(url);
     }
   }

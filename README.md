@@ -10,11 +10,14 @@ An installable, mobile first PWA for EV drivers and station operators in Nigeria
 
 ## Highlights
 
-- Driver flow: map, search + filters, station detail, slot picker, booking, QR reference, email confirmation, cancellation.
-- Operator flow: dashboard with animated counters, station and charger management with pin picker, one tap status toggle, bookings filter.
-- Real time updates: charger status changes and new bookings propagate live to open driver sessions using Supabase Realtime.
+- Driver Home: profile, animated battery ring, upcoming booking countdown, quick actions, stats, recent activity.
+- Map: MapLibre GL over OpenFreeMap tiles (no API key, no CARTO). Tap the map to drop a simulated car; the app uses that as the origin for routing and time to start charging.
+- Live queue: every charger has an `in_use` state, session end time, and a waiting count. A server RPC simulates realistic activity and Supabase Realtime streams updates every few seconds.
+- Smart routing: for every station PlugSpot computes drive time + estimated wait ("time to start charging") and highlights a **Faster option** when a farther free station beats the nearest one.
+- Turn by turn navigation: routes come from the OSRM public router (with a straight line fallback), the map runs heading up with 3D tilt following the car, and the browser Web Speech API reads out turns in English (prefers en-NG or en-GB voices).
+- Operator flow: dashboard with animated counters, station and charger management with a map pin picker, one tap status toggle, bookings filter.
 - Double booking prevention enforced in Postgres via `EXCLUDE USING gist` plus a `SECURITY DEFINER` function; hostile concurrent bookings on the same slot resolve to exactly one confirmed booking.
-- Truly dark theme, glossy green primary, glass cards, Motion transitions, respects reduced motion.
+- Installable PWA: manifest, service worker, offline page, maskable icon, install prompt.
 - Prices in Naira, dates in Africa/Lagos time.
 
 ## Architecture
@@ -101,9 +104,17 @@ Prereqs: Node 20+ (Node 22 recommended), a Supabase project, a Resend account (o
 ## Auth flows
 
 - `/sign-up` posts to Supabase with `emailRedirectTo: NEXT_PUBLIC_APP_URL/auth/confirm`, then routes to `/auth/check-email` with an animated "Check your email" screen and a resend button on a 60 second cooldown.
-- `/auth/confirm` calls `supabase.auth.verifyOtp({ token_hash, type })`, then routes the user to their role home (driver or operator). Failures land on `/auth/error` with a friendly message.
-- `/sign-in` catches the "email not confirmed" error and inlines a Resend confirmation email button.
-- `/auth/forgot-password` sends a password reset email; the recovery link comes back through `/auth/confirm?type=recovery` and hands off to `/auth/reset-password`.
+- `/auth/confirm` calls `supabase.auth.verifyOtp({ token_hash, type })` and then **signs the session out** and sends the user to `/sign-in?confirmed=1`. The user signs in themselves. Failures land on `/auth/error` with a friendly message.
+- `/sign-in` catches the "email not confirmed" error and inlines a Resend confirmation email button. Password fields have a reveal toggle.
+- `/auth/forgot-password` sends a password reset email; the recovery link comes back through `/auth/confirm?type=recovery` and hands off to `/auth/reset-password` (which keeps the session so the user can set a new password).
+
+## Simulator and live queue
+
+The `charger_state` table holds one row per charger with `in_use`, `session_ends_at`, and `waiting`. A `tick_charger_state` RPC (SECURITY DEFINER) advances the simulator: idle chargers occasionally begin sessions, running chargers can pick up a queue, and finished sessions promote the next car. The client pings the tick RPC every 6 seconds while the map is open. All changes stream to open clients through Supabase Realtime.
+
+## Turn by turn
+
+Routes are fetched from `https://router.project-osrm.org` (public demo, no key). On any failure the app falls back to a straight line so the demo never breaks. The map runs heading up with 3D tilt while running; voice guidance uses the Web Speech API and speaks at 500 m, 200 m, and 60 m before each maneuver. Speed selector (1x, 5x, 20x) controls the simulated pace so a full route completes in seconds during a demo.
 
 ## Tests
 

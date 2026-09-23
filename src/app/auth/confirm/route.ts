@@ -7,18 +7,19 @@ export async function GET(req: NextRequest) {
   const { searchParams, origin } = new URL(req.url);
   const token_hash = searchParams.get("token_hash");
   const type = searchParams.get("type") as EmailOtpType | null;
-  const next = searchParams.get("next");
 
   if (!token_hash || !type) {
     return NextResponse.redirect(`${origin}/auth/error?reason=missing_token`);
   }
 
-  const response = NextResponse.redirect(`${origin}/`);
+  // We create a scratch cookie jar. For signup we throw the session away right after verifying so
+  // the user has to sign in themselves. For recovery we keep it so they can set a new password.
+  const scratch = NextResponse.redirect(`${origin}/`);
   const supabase = createServerClient(env.SUPABASE_URL, env.SUPABASE_PUBLISHABLE_KEY, {
     cookies: {
       getAll: () => req.cookies.getAll(),
       setAll: (items) => {
-        items.forEach(({ name, value, options }) => response.cookies.set(name, value, options));
+        items.forEach(({ name, value, options }) => scratch.cookies.set(name, value, options));
       },
     },
   });
@@ -32,20 +33,20 @@ export async function GET(req: NextRequest) {
   }
 
   if (type === "recovery") {
-    return NextResponse.redirect(`${origin}/auth/reset-password`);
+    // Keep the session so the user can update their password.
+    const redirect = NextResponse.redirect(`${origin}/auth/reset-password`);
+    scratch.cookies.getAll().forEach((c) => redirect.cookies.set(c));
+    return redirect;
   }
 
-  // Route by role to the right home
-  const { data: { user } } = await supabase.auth.getUser();
-  let destination = next || "/driver/map";
-  if (user) {
-    const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).maybeSingle();
-    destination = profile?.role === "operator" ? "/operator/dashboard" : "/driver/map";
-  }
+  // Signup / email confirmation: do NOT auto sign in.
+  // Sign the fresh session out and send the user to /sign-in with a friendly notice.
+  await supabase.auth.signOut();
 
-  const finalUrl = new URL(destination, origin);
-  const redirect = NextResponse.redirect(finalUrl);
-  // Carry the cookies that supabase set on `response` over to the final redirect
-  response.cookies.getAll().forEach((c) => redirect.cookies.set(c));
+  const signInUrl = new URL(`${origin}/sign-in`);
+  signInUrl.searchParams.set("confirmed", "1");
+  const redirect = NextResponse.redirect(signInUrl);
+  // Copy the signed out cookies (which clear any residual session) onto the final response.
+  scratch.cookies.getAll().forEach((c) => redirect.cookies.set(c));
   return redirect;
 }

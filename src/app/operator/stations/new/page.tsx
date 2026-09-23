@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { Button, Card, Input, Label } from "@/components/ui";
 
-const PinPicker = dynamic(() => import("@/components/map/pin-picker"), { ssr: false, loading: () => <div className="h-64 skeleton rounded-2xl" /> });
+const PlugMap = dynamic(() => import("@/components/map/plug-map"), { ssr: false, loading: () => <div className="h-64 skeleton rounded-2xl" /> });
 
 export default function NewStation() {
   const router = useRouter();
@@ -42,8 +42,14 @@ export default function NewStation() {
         <div className="space-y-1.5"><Label>Amenities (comma separated)</Label><Input value={amenities} onChange={(e) => setAmenities(e.target.value)} placeholder="Cafe, WiFi" /></div>
       </Card>
       <Card>
-        <div className="text-xs text-[var(--muted-foreground)] mb-2">Drop a pin</div>
-        <div className="h-64 rounded-2xl overflow-hidden"><PinPicker value={pin} onChange={setPin} /></div>
+        <div className="text-xs text-[var(--muted-foreground)] mb-2">Tap the map to place the station</div>
+        <div className="h-64 rounded-xl overflow-hidden">
+          <PlugMap
+            stations={[{ id: "pin", name: "Location", lng: pin.lng, lat: pin.lat, online: 1, total: 1 }]}
+            center={{ lng: pin.lng, lat: pin.lat }}
+            onMapClick={(lng, lat) => setPin({ lng, lat })}
+          />
+        </div>
         <div className="mt-2 text-xs text-[var(--muted-foreground)]">Lat {pin.lat.toFixed(5)} · Lng {pin.lng.toFixed(5)}</div>
       </Card>
       {error && <div className="text-sm text-[var(--accent)]">{error}</div>}

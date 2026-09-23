@@ -4,15 +4,15 @@ import { usePathname } from "next/navigation";
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 import {
-  Map, Search, CalendarCheck, User,
+  Home, Map, CalendarCheck, User,
   LayoutDashboard, Building2, CalendarRange, Settings,
   type LucideIcon,
 } from "lucide-react";
 
 const NAVS: Record<"driver" | "operator", { href: string; label: string; icon: LucideIcon }[]> = {
   driver: [
+    { href: "/driver/home", label: "Home", icon: Home },
     { href: "/driver/map", label: "Map", icon: Map },
-    { href: "/driver/search", label: "Search", icon: Search },
     { href: "/driver/bookings", label: "Bookings", icon: CalendarCheck },
     { href: "/driver/profile", label: "Profile", icon: User },
   ],

@@ -167,13 +167,17 @@ html, body {
   70% { transform: scale(1.65); opacity: 0; }
   100% { opacity: 0; }
 }
-.marker-pulse::after {
+.marker-pulse::after,
+.plug-pulse::after {
   content: "";
   position: absolute; inset: 0;
   border-radius: 9999px;
-  border: 2px solid var(--primary);
+  border: 2px solid #2F5BD3;
   animation: marker-pulse 2s ease-out infinite;
 }
+.plug-station-marker { transition: transform 150ms ease; }
+.plug-station-marker:hover { transform: scale(1.06); }
+.maplibregl-ctrl-attrib { font-size: 10px; }
 
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }

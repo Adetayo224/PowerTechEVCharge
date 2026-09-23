@@ -1,63 +1,56 @@
 # PlugSpot · 5 minute demo script
 
-Total time: about 5 minutes. Open two browser windows side by side at phone width (390 px) so you can show real time updates.
+Total time: about 5 minutes. Use a phone width window (390 px) so the layout looks native.
 
 **Live app:** https://plugspot.samfredrobotics.com
 
 ## 0. Setup (once before the demo)
 
-1. Open https://plugspot.samfredrobotics.com in two windows (or `npm run dev` and http://localhost:3000 for the local version).
-2. Left window: sign in as `driver@demo.powertech.ng` / `Demo1234!`
-3. Right window: sign in as `operator@demo.powertech.ng` / `Demo1234!`
+1. Open the live URL (or `npm run dev` and http://localhost:3000 for local).
+2. Sign in as `driver@demo.powertech.ng` / `Demo1234!`.
 
-## 1. Cover screen (15 s)
+## 1. Home (30 s)
 
-- Fresh tab on `/`, show the animated splash, tagline, and the two role buttons.
-- Highlight: mobile first PWA, installable from Profile.
+- Land on `/driver/home`.
+- Show the profile card, the animated battery ring (My vehicle), the range in km, the upcoming booking with the live countdown, quick actions, stats, and recent activity.
 
-## 2. Driver: find a station (60 s)
+## 2. Set your location in Lekki (30 s)
 
-- Left window is on `/driver/map`. Point out the count chip, pulsing green markers on stations with a charger online, and dark/light theme awareness.
-- Tap a marker in Lekki. The bottom sheet slides up. Show chargers, price, status pairs (icon plus label).
-- Tap View station. Show the details page: chargers list, connector, kW, price in Naira, Open in Google Maps.
+- Bottom nav: tap **Map**. Because you have not set a location yet, the top pill reads "Tap map to set your location".
+- Tap on Lekki Phase 1 (near Admiralty Way) on the map. A blue car marker drops with a heading arrow. The pill switches to "Location set".
 
-## 3. Driver: book a slot (60 s)
+## 3. Find a charger, smart reroute (60 s)
 
-- Tap Book on an online charger.
-- Show the date strip (next 7 days) and the 30 minute slot grid. Past slots are struck through, taken slots are greyed.
-- Tap a slot. Estimated cost updates live. Tap Confirm booking.
-- Success screen with animated check, 8 char reference, QR code, and a summary.
-- Confirmation email is queued via Resend if `RESEND_API_KEY` is set.
+- Drag the bottom sheet up. Point out the list is sorted by **time to start charging** = drive time + estimated wait.
+- Point out any **Faster option** card floating above the sheet: "Station X is 4 km farther, but you start charging 12 min sooner". The nearest is Lekki Phase 1; if it happens to be busy the recommendation will point to Ikoyi or Victoria Island.
+- Tap **Go there** on the faster option (or tap any station in the list).
 
-## 4. Live status change (45 s)
+## 4. Book a slot (45 s)
 
-- On the operator window, go to Stations, pick the same Lekki station, and tap Offline on the charger the driver just booked from.
-- Left window driver station detail page updates the status badge to Offline within a second (Supabase Realtime).
+- On the station detail page, tap **Book** on an online charger.
+- Pick a 30 minute slot and confirm. Booking confirmation shows with a QR reference.
 
-## 5. Double booking (60 s, the money moment)
+## 5. Turn by turn with voice (75 s)
 
-- Back on the driver window, refresh the map, pick a different station, book a slot.
-- Open a second driver tab (also signed in as the same driver), race to the same slot on the same charger.
-- Second attempt returns `This slot was just taken. Please pick another.` The row count in the database stays exactly one confirmed booking.
-- Optional: `npm test` shows the automated version passing (`prevents double booking on the same slot (Promise.all)`).
+- Back to Home. Tap **Navigate** on the upcoming booking card.
+- The map switches to heading up with 3D tilt. The next turn banner shows the distance to the maneuver, ETA, and remaining km.
+- Tap **Start** and set speed to **20x**. The car glides along the route; voice guidance announces upcoming turns ("In 200 metres, turn right onto Adeola Odeku Street"). Toggle **mute** to demonstrate.
+- On arrival, the "You have arrived" card appears with a link back to the booking.
 
-## 6. Operator dashboard (60 s)
+## 6. Live queue proof (30 s)
 
-- Switch to operator window > Dashboard.
-- Animated counter cards: Stations, Online chargers, Bookings today, Revenue today.
-- 7 day bar chart animates in.
-- Recent bookings list includes the ones the driver just created.
-- Bookings tab: filter by station and status.
+- Open a second window, sign in as `operator@demo.powertech.ng`.
+- Wait a few seconds. The **charger_state** table updates every 6 s through Supabase Realtime, so the driver's map shows waiting counts and pulses in real time without a refresh.
 
-## 7. PWA (30 s)
+## 7. Double booking guard (30 s)
 
-- Profile > Install app (Chromium prompt), or Add to Home Screen on iOS.
-- Show the app icon, standalone launch, safe area bottom nav.
+- Back to the driver window. Try to book the exact slot you just took a second time (open the booking flow in a second tab and race). You get a friendly "This slot was just taken. Please pick another." No duplicate row in the database.
 
 ## Cheat sheet
 
-- Demo driver: `driver@demo.powertech.ng` / `Demo1234!`
-- Demo operator: `operator@demo.powertech.ng` / `Demo1234!`
 - Live URL: https://plugspot.samfredrobotics.com
 - Local URL: http://localhost:3000
+- Demo driver: `driver@demo.powertech.ng` / `Demo1234!`
+- Demo operator: `operator@demo.powertech.ng` / `Demo1234!`
 - Reset demo data: `npm run seed`
+- Screenshots: `docs/screenshots/` after running `npm run test:e2e -- e2e/screenshots.spec.ts`

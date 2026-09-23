@@ -60,6 +60,11 @@ function SignInInner() {
           <h1 className="mt-4 text-2xl font-bold">Welcome back</h1>
           <p className="text-sm text-[var(--muted-foreground)]">Sign in to continue</p>
         </div>
+        {sp.get("confirmed") === "1" && (
+          <div className="mb-4 rounded-xl border border-[var(--primary)]/25 bg-[var(--primary-soft)] px-4 py-3 text-sm text-[var(--primary)]">
+            Email confirmed. Please sign in to continue.
+          </div>
+        )}
         <Card>
           <form onSubmit={submit} className="space-y-4">
             <div className="space-y-1.5">
