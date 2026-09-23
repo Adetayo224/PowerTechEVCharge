@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Locate, MapPin, ChevronRight } from "lucide-react";
 import Link from "next/link";
-import { Button, Card, Skeleton } from "@/components/ui";
+import { Button, Skeleton } from "@/components/ui";
 import { StatusBadge } from "@/components/status-badge";
 import type { Charger, Station } from "@/lib/supabase/types";
 import { pricePerKwh } from "@/lib/utils";
@@ -42,7 +42,7 @@ export default function DriverMap() {
       </div>
 
       <div className="pointer-events-none absolute top-0 inset-x-0 p-4 safe-top">
-        <motion.div initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="glass rounded-2xl px-4 py-3 flex items-center justify-between pointer-events-auto">
+        <motion.div initial={{ y: -8, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.2 }} className="float px-4 py-3 flex items-center justify-between pointer-events-auto">
           <div>
             <div className="text-xs text-[var(--muted-foreground)]">Stations near you</div>
             <div className="text-base font-semibold">{stations?.length ?? "…"} nearby · {availableCount} available</div>
@@ -58,10 +58,10 @@ export default function DriverMap() {
             transition={{ type: "spring", stiffness: 260, damping: 30 }}
             className="absolute inset-x-0 bottom-24 z-30 mx-3"
           >
-            <Card className="p-5">
-              <button onClick={() => setSelected(null)} className="absolute right-4 top-4 text-xs text-[var(--muted-foreground)]">Close</button>
+            <div className="float p-5 relative">
+              <button onClick={() => setSelected(null)} className="absolute right-4 top-4 text-xs text-[var(--muted-foreground)] hover:text-foreground">Close</button>
               <div className="flex items-start gap-3">
-                <div className="rounded-xl bg-emerald-500/10 p-2"><MapPin className="h-5 w-5 text-emerald-600" /></div>
+                <div className="rounded-xl bg-[var(--primary-soft)] p-2"><MapPin className="h-5 w-5 text-[var(--primary)]" /></div>
                 <div className="flex-1">
                   <div className="text-base font-semibold">{selected.name}</div>
                   <div className="text-xs text-[var(--muted-foreground)]">{selected.address}</div>
@@ -81,7 +81,7 @@ export default function DriverMap() {
                   </div>
                 </div>
               </div>
-            </Card>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

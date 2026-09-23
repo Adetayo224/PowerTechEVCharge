@@ -57,7 +57,7 @@ export default function OperatorStation({ params }: { params: Promise<{ id: stri
           <motion.div key={c.id} initial={{ y: 12, opacity: 0 }} animate={{ y: 0, opacity: 1 }}>
             <Card>
               <div className="flex items-start gap-3">
-                <div className="rounded-xl bg-emerald-500/10 p-2"><Zap className="h-5 w-5 text-emerald-600" /></div>
+                <div className="rounded-xl bg-[var(--primary-soft)] p-2"><Zap className="h-5 w-5 text-[var(--primary)]" /></div>
                 <div className="flex-1">
                   <div className="text-sm font-semibold">Charger {c.label}</div>
                   <div className="text-xs text-[var(--muted-foreground)]">{c.connector_type} · {c.power_kw} kW · {pricePerKwh(c.price_per_kwh)}</div>
@@ -65,7 +65,7 @@ export default function OperatorStation({ params }: { params: Promise<{ id: stri
                     {STATUSES.map((s) => (
                       <button key={s} onClick={() => updateCharger(c.id, { status: s })}
                         className={`text-xs px-2.5 py-1 rounded-full border capitalize
-                          ${c.status === s ? "bg-emerald-500 text-white border-emerald-500" : "border-[var(--border)] text-[var(--muted-foreground)]"}`}>{s}</button>
+                          ${c.status === s ? "bg-[var(--primary)] text-[var(--primary-fg)] border-[var(--primary)]" : "border-[var(--border)] text-[var(--muted-foreground)]"}`}>{s}</button>
                     ))}
                   </div>
                 </div>

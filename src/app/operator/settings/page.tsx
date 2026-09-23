@@ -23,7 +23,7 @@ export default function OperatorSettings() {
           {([{ v: "light", i: Sun }, { v: "system", i: Monitor }, { v: "dark", i: Moon }] as const).map(({ v, i: Icon }) => (
             <button key={v} onClick={() => setTheme(v)}
               className={`h-11 rounded-2xl border flex items-center justify-center gap-2 text-sm font-medium capitalize
-                ${theme === v ? "bg-emerald-500 text-white border-emerald-500" : "border-[var(--border)] bg-[var(--card)] text-foreground"}`}>
+                ${theme === v ? "bg-[var(--primary)] text-[var(--primary-fg)] border-[var(--primary)]" : "border-[var(--border)] bg-[var(--card)] text-foreground"}`}>
               <Icon className="h-4 w-4" /> {v}
             </button>
           ))}

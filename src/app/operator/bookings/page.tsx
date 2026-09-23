@@ -57,7 +57,7 @@ export default function OperatorBookings() {
                   <div className="min-w-0">
                     <div className="text-sm font-semibold truncate">{b.chargers.stations.name}</div>
                     <div className="text-xs text-[var(--muted-foreground)]">Charger {b.chargers.label} · {formatSlotLong(start)}</div>
-                    <div className="text-xs mt-1"><Badge tone={b.status === "confirmed" ? "success" : b.status === "cancelled" ? "danger" : "neutral"}>{b.status}</Badge> · {b.reference}</div>
+                    <div className="text-xs mt-1"><Badge tone={b.status === "confirmed" ? "primary" : b.status === "cancelled" ? "accent" : "neutral"}>{b.status}</Badge> · {b.reference}</div>
                   </div>
                   <div className="text-sm font-bold">{formatNaira(Number(b.estimated_cost))}</div>
                 </div>

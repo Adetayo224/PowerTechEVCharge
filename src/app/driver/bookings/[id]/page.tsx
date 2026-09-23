@@ -32,7 +32,7 @@ function Inner({ id }: { id: string }) {
       setBooking(data as Booking);
       if (data?.reference) {
         const QR = (await import("qrcode")).default;
-        const url = await QR.toDataURL(data.reference, { margin: 1, width: 220, color: { dark: "#047857", light: "#ffffff" } });
+        const url = await QR.toDataURL(data.reference, { margin: 1, width: 220, color: { dark: "#111827", light: "#ffffff" } });
         setQrDataUrl(url);
       }
     })();
@@ -55,9 +55,9 @@ function Inner({ id }: { id: string }) {
     <div className="max-w-md mx-auto p-4 pt-6 safe-top space-y-4 pb-4">
       {isNew && (
         <motion.div initial={{ scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: "spring", stiffness: 220, damping: 18 }}
-          className="mx-auto w-20 h-20 rounded-full bg-emerald-500/15 border border-emerald-500/40 flex items-center justify-center">
+          className="mx-auto w-20 h-20 rounded-full bg-[var(--primary-soft)] border border-[var(--primary)]/25 flex items-center justify-center">
           <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.2, type: "spring" }}>
-            <Check className="h-10 w-10 text-emerald-600" />
+            <Check className="h-10 w-10 text-[var(--primary)]" />
           </motion.div>
         </motion.div>
       )}
@@ -71,14 +71,14 @@ function Inner({ id }: { id: string }) {
 
       <Card>
         <div className="flex items-start gap-3">
-          <div className="rounded-xl bg-emerald-500/10 p-2"><MapPin className="h-5 w-5 text-emerald-600" /></div>
+          <div className="rounded-xl bg-[var(--primary-soft)] p-2"><MapPin className="h-5 w-5 text-[var(--primary)]" /></div>
           <div>
             <div className="text-sm font-semibold">{booking.chargers.stations.name}</div>
             <div className="text-xs text-[var(--muted-foreground)]">{booking.chargers.stations.address}</div>
           </div>
         </div>
         <div className="mt-3 grid grid-cols-2 gap-3 text-sm">
-          <div><div className="text-xs text-[var(--muted-foreground)]">Charger</div><div className="font-medium flex items-center gap-1"><Zap className="h-4 w-4 text-emerald-600" /> {booking.chargers.label} · {booking.chargers.connector_type}</div></div>
+          <div><div className="text-xs text-[var(--muted-foreground)]">Charger</div><div className="font-medium flex items-center gap-1"><Zap className="h-4 w-4 text-[var(--primary)]" /> {booking.chargers.label} · {booking.chargers.connector_type}</div></div>
           <div><div className="text-xs text-[var(--muted-foreground)]">When</div><div className="font-medium">{formatSlotLong(start)}</div></div>
           <div><div className="text-xs text-[var(--muted-foreground)]">Energy</div><div className="font-medium">{booking.estimated_kwh} kWh</div></div>
           <div><div className="text-xs text-[var(--muted-foreground)]">Cost</div><div className="font-bold">{formatNaira(booking.estimated_cost)}</div></div>

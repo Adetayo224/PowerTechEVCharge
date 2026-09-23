@@ -1,26 +1,49 @@
-export function Logo({ size = 40 }: { size?: number }) {
+import { cn } from "@/lib/utils";
+
+/**
+ * PlugSpot mark: a map pin whose inner negative space is a lightning bolt.
+ * No face, no eyes, no character. Geometric, minimal.
+ */
+export function LogoMark({ size = 32, className, color = "var(--primary)" }: { size?: number; className?: string; color?: string }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 64 64" fill="none" aria-label="PlugSpot logo">
-      <defs>
-        <linearGradient id="ps-lg" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#10B981" />
-          <stop offset="1" stopColor="#047857" />
-        </linearGradient>
-        <linearGradient id="ps-gloss" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#ffffff" stopOpacity="0.55" />
-          <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
-        </linearGradient>
-      </defs>
-      <rect x="2" y="2" width="60" height="60" rx="16" fill="url(#ps-lg)" />
-      <rect x="2" y="2" width="60" height="30" rx="16" fill="url(#ps-gloss)" />
-      {/* Location pin shape */}
-      <path d="M32 12c-8.3 0-15 6.4-15 14.3 0 10.7 15 25.7 15 25.7s15-15 15-25.7C47 18.4 40.3 12 32 12z" fill="#ffffff"/>
-      {/* Plug body inside the pin's circle area */}
-      <rect x="24" y="19" width="16" height="14" rx="3" fill="url(#ps-lg)"/>
-      <rect x="26.5" y="22" width="2.5" height="4" rx="1" fill="#ffffff"/>
-      <rect x="35" y="22" width="2.5" height="4" rx="1" fill="#ffffff"/>
-      <rect x="29.5" y="33" width="5" height="3" rx="1.2" fill="url(#ps-lg)"/>
-      <rect x="30.8" y="36" width="2.4" height="4" rx="1" fill="url(#ps-lg)"/>
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 40 48"
+      aria-label="PlugSpot"
+      className={className}
+      fill="none"
+    >
+      {/* Pin body with bolt cut out via evenodd */}
+      <path
+        d="M20 1.5c-9.665 0-17.5 7.611-17.5 17 0 5.9 3.516 11.32 7.646 15.79 4.145 4.484 8.998 8.048 9.352 8.298a.845.845 0 0 0 1.004 0c.354-.25 5.207-3.814 9.352-8.298C33.984 29.82 37.5 24.4 37.5 18.5c0-9.389-7.835-17-17.5-17Zm2.5 8.5-8 12h5l-2 8 8-12h-5l2-8Z"
+        fill={color}
+        fillRule="evenodd"
+        clipRule="evenodd"
+      />
     </svg>
   );
 }
+
+export function LogoWordmark({ size = 28, className }: { size?: number; className?: string }) {
+  const height = size;
+  const mark = height;
+  return (
+    <div className={cn("inline-flex items-center gap-2", className)}>
+      <LogoMark size={mark} />
+      <span
+        className="font-semibold tracking-tight text-foreground"
+        style={{ fontSize: Math.round(mark * 0.72), lineHeight: 1 }}
+      >
+        PlugSpot
+      </span>
+    </div>
+  );
+}
+
+export function LogoMono({ size = 32, className }: { size?: number; className?: string }) {
+  return <LogoMark size={size} color="currentColor" className={className} />;
+}
+
+// Back-compat: existing callers imported `Logo`. Keep it as an alias for the mark.
+export const Logo = LogoMark;

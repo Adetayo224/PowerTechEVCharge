@@ -67,7 +67,7 @@ export default function SearchPage() {
               <div className="flex flex-wrap gap-2">
                 {CONNECTORS.map((c) => (
                   <button key={c || "any"} onClick={() => setConnector(c)}
-                    className={`px-3 py-1.5 text-xs rounded-full border ${connector === c ? "bg-emerald-500/10 border-emerald-500 text-emerald-600" : "border-[var(--border)] text-[var(--muted-foreground)]"}`}>
+                    className={`px-3 py-1.5 text-xs rounded-full border ${connector === c ? "bg-[var(--primary-soft)] border-[var(--primary)] text-[var(--primary)]" : "border-[var(--border)] text-[var(--muted-foreground)]"}`}>
                     {c || "Any"}
                   </button>
                 ))}
@@ -95,7 +95,7 @@ export default function SearchPage() {
             <motion.div key={s.id} initial={{ y: 12, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: i * 0.03 }}>
               <Link href={`/driver/stations/${s.id}`}>
                 <Card className="flex items-center gap-3">
-                  <div className="rounded-xl bg-emerald-500/10 p-2"><MapPin className="h-5 w-5 text-emerald-600" /></div>
+                  <div className="rounded-xl bg-[var(--primary-soft)] p-2"><MapPin className="h-5 w-5 text-[var(--primary)]" /></div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <div className="text-sm font-semibold truncate">{s.name}</div>

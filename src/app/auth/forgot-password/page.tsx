@@ -40,10 +40,10 @@ export default function ForgotPassword() {
               <Label htmlFor="email">Email</Label>
               <Input id="email" type="email" required autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" />
             </div>
-            {error && <div className="text-sm text-red-500">{error}</div>}
+            {error && <div className="text-sm text-[var(--accent)]">{error}</div>}
             <Button type="submit" size="lg" className="w-full" disabled={sending}>{sending ? "Sending" : "Send reset link"}</Button>
             <p className="text-center text-sm text-[var(--muted-foreground)]">
-              <Link className="text-emerald-600 dark:text-emerald-400 font-semibold" href="/sign-in">Back to sign in</Link>
+              <Link className="text-[var(--primary)] font-semibold" href="/sign-in">Back to sign in</Link>
             </p>
           </form>
         </Card>

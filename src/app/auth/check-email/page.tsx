@@ -53,8 +53,8 @@ function Inner() {
       <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="w-full max-w-md">
         <Card className="text-center p-6">
           <motion.div initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: "spring", stiffness: 220, damping: 18 }}
-            className="mx-auto w-16 h-16 rounded-full bg-emerald-500/15 border border-emerald-500/40 flex items-center justify-center">
-            <Mail className="h-8 w-8 text-emerald-600" />
+            className="mx-auto w-16 h-16 rounded-full bg-[var(--primary-soft)] border border-[var(--primary)]/25 flex items-center justify-center">
+            <Mail className="h-8 w-8 text-[var(--primary)]" />
           </motion.div>
           <h1 className="mt-4 text-xl font-semibold">{title}</h1>
           <p className="mt-2 text-sm text-[var(--muted-foreground)]">{body}</p>

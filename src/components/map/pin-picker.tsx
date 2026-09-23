@@ -22,7 +22,7 @@ export default function PinPicker({ value, onChange }: { value: { lat: number; l
         ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
         : "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
       L.tileLayer(url, { subdomains: "abcd" }).addTo(mapRef.current!);
-      const icon = L.divIcon({ html: `<div style="width:28px;height:28px;border-radius:14px;background:linear-gradient(180deg,#10B981,#047857);border:2px solid white;box-shadow:0 4px 10px rgba(0,0,0,0.3)"></div>`, className: "", iconSize: [28, 28], iconAnchor: [14, 14] });
+      const icon = L.divIcon({ html: `<div style="width:26px;height:26px;border-radius:13px;background:#2F5BD3;border:2px solid #ffffff;box-shadow:0 4px 10px rgba(17,24,39,0.25)"></div>`, className: "", iconSize: [26, 26], iconAnchor: [13, 13] });
       markerRef.current = L.marker([value.lat, value.lng], { draggable: true, icon }).addTo(mapRef.current!);
       markerRef.current.on("dragend", () => {
         const ll = markerRef.current!.getLatLng();

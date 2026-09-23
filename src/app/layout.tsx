@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   description: "Find a charger. Book your slot. Drive on.",
   manifest: "/manifest.webmanifest",
   applicationName: "PlugSpot",
-  appleWebApp: { capable: true, statusBarStyle: "black-translucent", title: "PlugSpot" },
+  appleWebApp: { capable: true, statusBarStyle: "default", title: "PlugSpot" },
   icons: {
     icon: [{ url: "/icons/icon.svg", type: "image/svg+xml" }],
     apple: [{ url: "/icons/icon.svg" }],
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
+    { media: "(prefers-color-scheme: dark)", color: "#0b0b0c" },
   ],
   width: "device-width",
   initialScale: 1,
@@ -58,7 +58,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('theme');var m=window.matchMedia('(prefers-color-scheme: dark)').matches;var d=t?t==='dark':m;if(d)document.documentElement.classList.add('dark');}catch(e){}})();`,
+            __html: `(function(){try{var t=localStorage.getItem('theme');if(!t){document.documentElement.classList.remove('dark');return;}if(t==='dark'){document.documentElement.classList.add('dark');return;}if(t==='system'&&window.matchMedia('(prefers-color-scheme: dark)').matches){document.documentElement.classList.add('dark');}}catch(e){}})();`,
           }}
         />
       </head>

@@ -28,21 +28,36 @@ export function BottomNav({ role }: { role: "driver" | "operator" }) {
   const path = usePathname();
   const items = NAVS[role];
   return (
-    <nav className="fixed bottom-0 inset-x-0 z-40 safe-bottom">
-      <div className="mx-auto max-w-md">
-        <div className="m-3 rounded-2xl glass px-2 py-1.5 flex items-center justify-between" style={{ background: "var(--nav-bg)" }}>
+    <nav className="fixed bottom-0 inset-x-0 z-40 safe-bottom pointer-events-none">
+      <div className="mx-auto max-w-md pointer-events-auto">
+        <div className="m-3 float px-1.5 py-1.5 flex items-center justify-between">
           {items.map((it) => {
             const active = path === it.href || path.startsWith(it.href + "/");
             const Icon = it.icon;
             return (
               <Link key={it.href} href={it.href} className="flex-1 flex items-center justify-center">
-                <div className="relative flex flex-col items-center gap-0.5 py-1.5 px-3 rounded-xl">
+                <div className="relative flex flex-col items-center gap-1 py-1.5 px-3 rounded-lg">
                   {active && (
-                    <motion.div layoutId="nav-active" className="absolute inset-0 rounded-xl bg-emerald-500/10 border border-emerald-500/30"
-                      transition={{ type: "spring", stiffness: 300, damping: 30 }} />
+                    <motion.div
+                      layoutId="nav-active"
+                      className="absolute inset-0 rounded-lg bg-[var(--surface)]"
+                      transition={{ type: "spring", stiffness: 500, damping: 40 }}
+                    />
                   )}
-                  <Icon className={cn("h-5 w-5 relative", active ? "text-emerald-600 dark:text-emerald-400" : "text-[var(--muted-foreground)]")} />
-                  <span className={cn("text-[10px] font-medium relative", active ? "text-emerald-600 dark:text-emerald-400" : "text-[var(--muted-foreground)]")}>{it.label}</span>
+                  <Icon
+                    className={cn(
+                      "h-5 w-5 relative transition-colors",
+                      active ? "text-foreground" : "text-[var(--muted-foreground)]"
+                    )}
+                  />
+                  <span
+                    className={cn(
+                      "text-[10px] font-semibold relative transition-colors",
+                      active ? "text-foreground" : "text-[var(--muted-foreground)]"
+                    )}
+                  >
+                    {it.label}
+                  </span>
                 </div>
               </Link>
             );

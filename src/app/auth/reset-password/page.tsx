@@ -38,7 +38,7 @@ export default function ResetPassword() {
           <form onSubmit={submit} className="space-y-4">
             <div className="space-y-1.5"><Label htmlFor="p1">New password</Label><Input id="p1" type="password" required minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} /></div>
             <div className="space-y-1.5"><Label htmlFor="p2">Confirm password</Label><Input id="p2" type="password" required minLength={8} value={confirm} onChange={(e) => setConfirm(e.target.value)} /></div>
-            {error && <div className="text-sm text-red-500">{error}</div>}
+            {error && <div className="text-sm text-[var(--accent)]">{error}</div>}
             <Button type="submit" size="lg" className="w-full" disabled={saving}>{saving ? "Saving" : "Update password"}</Button>
           </form>
         </Card>

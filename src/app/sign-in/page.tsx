@@ -69,7 +69,7 @@ function SignInInner() {
               <Label htmlFor="password">Password</Label>
               <Input id="password" type="password" required autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Your password" />
             </div>
-            {error && <div className="text-sm text-red-500">{error}</div>}
+            {error && <div className="text-sm text-[var(--accent)]">{error}</div>}
             {unconfirmed && (
               <div className="space-y-2">
                 <Button type="button" variant="outline" className="w-full" onClick={resendConfirmation} disabled={resending}>
@@ -81,7 +81,7 @@ function SignInInner() {
             <Button type="submit" size="lg" className="w-full" disabled={loading}>{loading ? "Signing in" : "Sign in"}</Button>
             <div className="flex items-center justify-between text-sm">
               <Link className="text-[var(--muted-foreground)]" href="/auth/forgot-password">Forgot password?</Link>
-              <Link className="text-emerald-600 dark:text-emerald-400 font-semibold" href="/sign-up">Create an account</Link>
+              <Link className="text-[var(--primary)] font-semibold" href="/sign-up">Create an account</Link>
             </div>
           </form>
         </Card>

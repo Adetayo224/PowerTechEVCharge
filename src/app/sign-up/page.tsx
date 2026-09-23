@@ -49,7 +49,7 @@ function SignUpInner() {
             <div className="grid grid-cols-2 gap-2">
               {(["driver","operator"] as const).map((r) => (
                 <button key={r} type="button" onClick={() => setRole(r)}
-                  className={`h-11 rounded-2xl border text-sm font-semibold ${role===r ? "border-emerald-500 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" : "border-[var(--border)] bg-[var(--card)] text-[var(--muted-foreground)]"}`}>
+                  className={`h-11 rounded-2xl border text-sm font-semibold ${role===r ? "border-[var(--primary)] bg-[var(--primary-soft)] text-[var(--primary)]" : "border-[var(--border)] bg-[var(--card)] text-[var(--muted-foreground)]"}`}>
                   {r === "driver" ? "Driver" : "Station operator"}
                 </button>
               ))}
@@ -70,10 +70,10 @@ function SignUpInner() {
               <Label htmlFor="password">Password</Label>
               <Input id="password" type="password" required minLength={8} autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} />
             </div>
-            {error && <div className="text-sm text-red-500">{error}</div>}
+            {error && <div className="text-sm text-[var(--accent)]">{error}</div>}
             <Button type="submit" size="lg" className="w-full" disabled={loading}>{loading ? "Creating" : "Create account"}</Button>
             <p className="text-center text-sm text-[var(--muted-foreground)]">
-              Already have an account? <Link className="text-emerald-600 dark:text-emerald-400 font-semibold" href="/sign-in">Sign in</Link>
+              Already have an account? <Link className="text-[var(--primary)] font-semibold" href="/sign-in">Sign in</Link>
             </p>
           </form>
         </Card>

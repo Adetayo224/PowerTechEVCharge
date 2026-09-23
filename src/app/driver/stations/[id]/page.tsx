@@ -35,17 +35,16 @@ export default function StationDetail({ params }: { params: Promise<{ id: string
 
   return (
     <div className="max-w-md mx-auto p-4 pt-6 safe-top space-y-4 pb-4">
-      <motion.div initial={{ y: 12, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
-        className="rounded-2xl overflow-hidden relative h-40 bg-gradient-to-br from-emerald-400 to-emerald-800 flex items-end p-4 text-white">
-        <div>
-          <div className="text-xs opacity-90">{station.city}</div>
-          <div className="text-xl font-bold">{station.name}</div>
+      <motion.div initial={{ y: 8, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.2 }}>
+        <div className="surface p-5">
+          <div className="text-xs text-[var(--muted-foreground)]">{station.city}</div>
+          <div className="mt-1 text-2xl font-bold tracking-tight">{station.name}</div>
         </div>
       </motion.div>
 
       <Card>
         <div className="flex items-start gap-3">
-          <MapPin className="h-5 w-5 text-emerald-600 mt-0.5" />
+          <MapPin className="h-5 w-5 text-[var(--primary)] mt-0.5" />
           <div className="flex-1">
             <div className="text-sm">{station.address}</div>
             <div className="mt-2">
@@ -58,7 +57,7 @@ export default function StationDetail({ params }: { params: Promise<{ id: string
         </div>
         {station.amenities?.length > 0 && (
           <div className="mt-3 flex flex-wrap gap-2">
-            {station.amenities.map((a) => <span key={a} className="text-xs bg-[var(--muted)] rounded-full px-2 py-1">{a}</span>)}
+            {station.amenities.map((a) => <span key={a} className="text-xs bg-[var(--surface)] rounded-full px-2 py-1">{a}</span>)}
           </div>
         )}
       </Card>
@@ -68,7 +67,7 @@ export default function StationDetail({ params }: { params: Promise<{ id: string
         {(station.chargers ?? []).map((c, i) => (
           <motion.div key={c.id} initial={{ y: 12, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: i * 0.04 }}>
             <Card className="flex items-center gap-3">
-              <div className="rounded-xl bg-emerald-500/10 p-2"><Zap className="h-5 w-5 text-emerald-600" /></div>
+              <div className="rounded-xl bg-[var(--primary-soft)] p-2"><Zap className="h-5 w-5 text-[var(--primary)]" /></div>
               <div className="flex-1 min-w-0">
                 <div className="text-sm font-semibold">Charger {c.label} · {c.connector_type}</div>
                 <div className="text-xs text-[var(--muted-foreground)]">{c.power_kw} kW · {pricePerKwh(c.price_per_kwh)}</div>

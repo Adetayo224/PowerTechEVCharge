@@ -69,7 +69,7 @@ export default function OperatorDashboard() {
           {days.map((d, i) => (
             <div key={i} className="flex-1 flex flex-col items-center gap-1">
               <motion.div initial={{ height: 0 }} animate={{ height: `${(d.value / max) * 100}%` }} transition={{ delay: i * 0.05 }}
-                className="w-full rounded-t-lg bg-gradient-to-b from-emerald-400 to-emerald-700 min-h-[4px]" />
+                className="w-full rounded-t-md bg-[var(--primary)] min-h-[4px]" />
               <div className="text-[10px] text-[var(--muted-foreground)]">{d.label}</div>
             </div>
           ))}
@@ -99,7 +99,7 @@ export default function OperatorDashboard() {
 function Stat({ label, icon: Icon, value, format, suffix }: { label: string; icon: typeof Building2; value: number; format?: (n: number) => string; suffix?: string }) {
   return (
     <Card>
-      <div className="flex items-center gap-2 text-xs text-[var(--muted-foreground)]"><Icon className="h-4 w-4 text-emerald-600" /> {label}</div>
+      <div className="flex items-center gap-2 text-xs text-[var(--muted-foreground)]"><Icon className="h-4 w-4 text-[var(--primary)]" /> {label}</div>
       <div className="mt-1 text-2xl font-bold"><AnimatedNumber value={value} format={format} />{suffix}</div>
     </Card>
   );

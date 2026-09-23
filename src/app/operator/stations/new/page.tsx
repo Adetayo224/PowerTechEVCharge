@@ -46,7 +46,7 @@ export default function NewStation() {
         <div className="h-64 rounded-2xl overflow-hidden"><PinPicker value={pin} onChange={setPin} /></div>
         <div className="mt-2 text-xs text-[var(--muted-foreground)]">Lat {pin.lat.toFixed(5)} · Lng {pin.lng.toFixed(5)}</div>
       </Card>
-      {error && <div className="text-sm text-red-500">{error}</div>}
+      {error && <div className="text-sm text-[var(--accent)]">{error}</div>}
       <Button type="submit" size="lg" className="w-full" disabled={submitting}>{submitting ? "Saving" : "Create station"}</Button>
     </form>
   );

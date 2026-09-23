@@ -46,14 +46,16 @@ export default function LeafletMap({
       for (const s of stations) {
         const onlineCount = (s.chargers ?? []).filter((c) => c.status === "online").length;
         const total = (s.chargers ?? []).length;
+        const hasOnline = onlineCount > 0;
+        const bg = hasOnline ? "#2F5BD3" : "#9CA3AF";
         const iconHtml = `
-          <div class="samfred-marker" style="position:relative">
-            <div style="width:44px;height:44px;border-radius:22px;background:linear-gradient(180deg,#10B981,#047857);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;box-shadow:0 6px 14px rgba(4,120,87,0.4)">
+          <div class="plugspot-marker" style="position:relative;display:flex;align-items:center;justify-content:center">
+            <div style="width:40px;height:40px;border-radius:20px;background:${bg};color:#ffffff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;border:2px solid #ffffff;box-shadow:0 4px 12px rgba(17,24,39,0.20)">
               ${onlineCount}/${total}
             </div>
-            ${onlineCount > 0 ? '<span class="pulse-ring" style="position:absolute;inset:0;pointer-events:none;border-radius:22px"></span>' : ""}
+            ${hasOnline ? '<span class="marker-pulse" style="position:absolute;width:40px;height:40px;pointer-events:none;border-radius:20px"></span>' : ""}
           </div>`;
-        const icon = L.divIcon({ html: iconHtml, className: "", iconSize: [44, 44], iconAnchor: [22, 22] });
+        const icon = L.divIcon({ html: iconHtml, className: "", iconSize: [40, 40], iconAnchor: [20, 20] });
         const marker = L.marker([s.lat, s.lng], { icon }).addTo(mapRef.current!);
         marker.on("click", () => onStationClick?.(s));
         markersRef.current.push(marker);

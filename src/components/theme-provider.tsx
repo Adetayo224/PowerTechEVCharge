@@ -6,12 +6,15 @@ type Ctx = { theme: Theme; resolved: "light" | "dark"; setTheme: (t: Theme) => v
 const ThemeCtx = createContext<Ctx | null>(null);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("system");
+  const [theme, setThemeState] = useState<Theme>("light");
   const [resolved, setResolved] = useState<"light" | "dark">("light");
 
   useEffect(() => {
-    const stored = (localStorage.getItem("theme") as Theme | null) ?? "system";
-    setThemeState(stored);
+    const stored = localStorage.getItem("theme") as Theme | null;
+    if (stored === "light" || stored === "dark" || stored === "system") {
+      setThemeState(stored);
+    }
+    // No stored preference: keep default "light" (do not follow system on first visit)
   }, []);
 
   useEffect(() => {
@@ -22,8 +25,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       setResolved(dark ? "dark" : "light");
     };
     apply();
-    mq.addEventListener("change", apply);
-    return () => mq.removeEventListener("change", apply);
+    if (theme === "system") {
+      mq.addEventListener("change", apply);
+      return () => mq.removeEventListener("change", apply);
+    }
   }, [theme]);
 
   const setTheme = useCallback((t: Theme) => {

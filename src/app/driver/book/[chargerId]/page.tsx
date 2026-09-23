@@ -71,7 +71,7 @@ export default function BookPage({ params }: { params: Promise<{ chargerId: stri
   return (
     <div className="max-w-md mx-auto p-4 pt-6 safe-top space-y-4 pb-4">
       <div className="flex items-center gap-2">
-        <button onClick={() => history.back()} className="p-2 rounded-xl bg-[var(--muted)]"><ChevronLeft className="h-5 w-5" /></button>
+        <button onClick={() => history.back()} className="p-2 rounded-xl bg-[var(--surface)]"><ChevronLeft className="h-5 w-5" /></button>
         <div>
           <div className="text-xs text-[var(--muted-foreground)]">Select a slot</div>
           <div className="text-lg font-semibold">Charger {charger?.label ?? "…"}</div>
@@ -80,7 +80,7 @@ export default function BookPage({ params }: { params: Promise<{ chargerId: stri
 
       {charger && (
         <Card className="flex items-center gap-3">
-          <div className="rounded-xl bg-emerald-500/10 p-2"><Zap className="h-5 w-5 text-emerald-600" /></div>
+          <div className="rounded-xl bg-[var(--primary-soft)] p-2"><Zap className="h-5 w-5 text-[var(--primary)]" /></div>
           <div className="text-sm">
             <div className="font-medium">{charger.connector_type} · {charger.power_kw} kW</div>
             <div className="text-[var(--muted-foreground)]">{pricePerKwh(charger.price_per_kwh)}</div>
@@ -92,7 +92,7 @@ export default function BookPage({ params }: { params: Promise<{ chargerId: stri
       <div className="flex gap-2 overflow-x-auto pb-1">
         {days.map((d, i) => (
           <button key={i} onClick={() => setDateIdx(i)}
-            className={`px-3 py-2 rounded-2xl text-xs min-w-[70px] border ${dateIdx === i ? "bg-emerald-500 text-white border-emerald-500" : "border-[var(--border)] bg-[var(--card)]"}`}>
+            className={`px-3 py-2 rounded-2xl text-xs min-w-[70px] border ${dateIdx === i ? "bg-[var(--primary)] text-[var(--primary-fg)] border-[var(--primary)]" : "border-[var(--border)] bg-[var(--card)]"}`}>
             <div className="opacity-80">{formatInTimeZone(d, "Africa/Lagos", "EEE")}</div>
             <div className="font-semibold">{formatInTimeZone(d, "Africa/Lagos", "dd MMM")}</div>
           </button>
@@ -112,9 +112,9 @@ export default function BookPage({ params }: { params: Promise<{ chargerId: stri
               return (
                 <button key={s.start} disabled={!s.available} onClick={() => setSelected(s)}
                   className={`h-10 rounded-xl text-xs font-medium border transition
-                    ${isSel ? "bg-emerald-500 text-white border-emerald-500" :
-                      s.available ? "bg-[var(--card)] border-[var(--border)] hover:border-emerald-500" :
-                      "bg-[var(--muted)] text-[var(--muted-foreground)] border-transparent line-through opacity-60"}`}>
+                    ${isSel ? "bg-[var(--primary)] text-[var(--primary-fg)] border-[var(--primary)]" :
+                      s.available ? "bg-[var(--card)] border-[var(--border)] hover:border-[var(--primary)]" :
+                      "bg-[var(--surface)] text-[var(--muted-foreground)] border-transparent line-through opacity-60"}`}>
                   {label}
                 </button>
               );
@@ -137,7 +137,7 @@ export default function BookPage({ params }: { params: Promise<{ chargerId: stri
                   <div className="text-base font-bold">{formatNaira(cost.cost)}</div>
                 </div>
               </div>
-              {error && <div className="text-sm text-red-500 mt-3">{error}</div>}
+              {error && <div className="text-sm text-[var(--accent)] mt-3">{error}</div>}
               <Button className="mt-4 w-full" size="lg" onClick={book} disabled={submitting}>
                 {submitting ? "Booking" : "Confirm booking"}
               </Button>

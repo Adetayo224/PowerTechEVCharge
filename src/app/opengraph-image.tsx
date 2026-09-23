@@ -5,6 +5,10 @@ export const alt = "PlugSpot · Find a charger. Book your slot. Drive on.";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
+const PRIMARY = "#2F5BD3";
+const INK = "#111827";
+const MUTED = "#4B5563";
+
 export default async function OGImage() {
   return new ImageResponse(
     (
@@ -14,56 +18,45 @@ export default async function OGImage() {
           height: "100%",
           display: "flex",
           flexDirection: "column",
-          background: "linear-gradient(135deg, #052e21 0%, #0a0a0a 100%)",
-          color: "white",
-          padding: "72px 88px",
+          background: "#ffffff",
+          color: INK,
+          padding: "80px 96px",
           fontFamily: "sans-serif",
-          position: "relative",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
-          <svg width={72} height={72} viewBox="0 0 64 64">
-            <defs>
-              <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stopColor="#10B981" />
-                <stop offset="1" stopColor="#047857" />
-              </linearGradient>
-            </defs>
-            <rect x="2" y="2" width="60" height="60" rx="16" fill="url(#g)" />
-            <path d="M32 12c-8.3 0-15 6.4-15 14.3 0 10.7 15 25.7 15 25.7s15-15 15-25.7C47 18.4 40.3 12 32 12z" fill="#ffffff" />
-            <rect x="24" y="19" width="16" height="14" rx="3" fill="url(#g)" />
-            <rect x="26.5" y="22" width="2.5" height="4" rx="1" fill="#ffffff" />
-            <rect x="35" y="22" width="2.5" height="4" rx="1" fill="#ffffff" />
-            <rect x="29.5" y="33" width="5" height="3" rx="1.2" fill="url(#g)" />
-            <rect x="30.8" y="36" width="2.4" height="4" rx="1" fill="url(#g)" />
+        <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
+          <svg width={64} height={76} viewBox="0 0 40 48">
+            <path
+              d="M20 1.5c-9.665 0-17.5 7.611-17.5 17 0 5.9 3.516 11.32 7.646 15.79 4.145 4.484 8.998 8.048 9.352 8.298a.845.845 0 0 0 1.004 0c.354-.25 5.207-3.814 9.352-8.298C33.984 29.82 37.5 24.4 37.5 18.5c0-9.389-7.835-17-17.5-17Zm2.5 8.5-8 12h5l-2 8 8-12h-5l2-8Z"
+              fill={PRIMARY}
+              fillRule="evenodd"
+              clipRule="evenodd"
+            />
           </svg>
-          <div style={{ fontSize: 44, fontWeight: 700, letterSpacing: -1 }}>PlugSpot</div>
+          <div style={{ fontSize: 44, fontWeight: 700, letterSpacing: -0.5, color: INK }}>
+            PlugSpot
+          </div>
         </div>
-        <div style={{ marginTop: 90, display: "flex", flexDirection: "column" }}>
-          <div style={{ fontSize: 96, fontWeight: 800, letterSpacing: -3, lineHeight: 1.05 }}>
+
+        <div style={{ marginTop: 100, display: "flex", flexDirection: "column" }}>
+          <div style={{ fontSize: 108, fontWeight: 800, letterSpacing: -3, lineHeight: 1.02, color: INK }}>
             Find a charger.
           </div>
-          <div
-            style={{
-              fontSize: 96,
-              fontWeight: 800,
-              letterSpacing: -3,
-              lineHeight: 1.05,
-              background: "linear-gradient(180deg,#10B981,#047857)",
-              backgroundClip: "text",
-              color: "transparent",
-            }}
-          >
-            Book your slot. Drive on.
+          <div style={{ fontSize: 108, fontWeight: 800, letterSpacing: -3, lineHeight: 1.02, color: INK }}>
+            Book your slot.
+          </div>
+          <div style={{ fontSize: 108, fontWeight: 800, letterSpacing: -3, lineHeight: 1.02, color: PRIMARY }}>
+            Drive on.
           </div>
         </div>
+
         <div
           style={{
             marginTop: "auto",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            color: "#a3a3a3",
+            color: MUTED,
             fontSize: 24,
           }}
         >

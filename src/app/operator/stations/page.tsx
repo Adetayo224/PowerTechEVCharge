@@ -32,7 +32,7 @@ export default function OperatorStations() {
           <motion.div key={s.id} initial={{ y: 12, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: i * 0.03 }}>
             <Link href={`/operator/stations/${s.id}`}>
               <Card className="flex items-center gap-3">
-                <div className="rounded-xl bg-emerald-500/10 p-2"><MapPin className="h-5 w-5 text-emerald-600" /></div>
+                <div className="rounded-xl bg-[var(--primary-soft)] p-2"><MapPin className="h-5 w-5 text-[var(--primary)]" /></div>
                 <div className="flex-1 min-w-0">
                   <div className="text-sm font-semibold truncate">{s.name}</div>
                   <div className="text-xs text-[var(--muted-foreground)] truncate">{s.address}</div>
