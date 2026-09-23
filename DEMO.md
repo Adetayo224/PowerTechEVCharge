@@ -1,12 +1,12 @@
-# Samfred Charge · 5 minute demo script
+# PlugSpot · 5 minute demo script
 
 Total time: about 5 minutes. Open two browser windows side by side at phone width (390 px) so you can show real time updates.
 
 ## 0. Setup (once before the demo)
 
 1. `npm run dev` in one terminal.
-2. Left window: sign in as `driver@demo.samfred.com` / `Demo1234!`
-3. Right window: sign in as `operator@demo.samfred.com` / `Demo1234!`
+2. Left window: sign in as `driver@demo.powertech.ng` / `Demo1234!`
+3. Right window: sign in as `operator@demo.powertech.ng` / `Demo1234!`
 
 ## 1. Cover screen (15 s)
 
@@ -54,7 +54,7 @@ Total time: about 5 minutes. Open two browser windows side by side at phone widt
 
 ## Cheat sheet
 
-- Demo driver: `driver@demo.samfred.com` / `Demo1234!`
-- Demo operator: `operator@demo.samfred.com` / `Demo1234!`
+- Demo driver: `driver@demo.powertech.ng` / `Demo1234!`
+- Demo operator: `operator@demo.powertech.ng` / `Demo1234!`
 - Local URL: http://localhost:3000
 - Reset demo data: `npm run seed`

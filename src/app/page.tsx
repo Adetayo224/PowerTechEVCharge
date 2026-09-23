@@ -13,7 +13,7 @@ export default function Cover() {
           <Logo size={96} />
         </motion.div>
         <motion.h1 initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.15 }} className="mt-6 text-4xl font-bold tracking-tight">
-          Samfred <span className="text-gradient">Charge</span>
+          <span className="text-gradient">PlugSpot</span>
         </motion.h1>
         <motion.p initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.25 }} className="mt-3 text-base text-[var(--muted-foreground)]">
           Find a charger. Book your slot. Drive on.

@@ -1,6 +1,6 @@
 # Decisions log
 
-Engineering choices I made while building Samfred Charge, and why.
+Engineering choices I made while building PlugSpot, and why.
 
 1. **Tailwind v4 with `@theme inline` tokens.** I stayed on Tailwind 4 with the CSS-first token system so I could drive the whole design system from a single stylesheet. Dark mode is a class on `<html>` set by a synchronous head script to avoid a flash of unstyled theme on first paint.
 2. **Plus Jakarta Sans via `next/font/google`.** Clean, modern, still free.

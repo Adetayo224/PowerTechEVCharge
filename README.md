@@ -1,8 +1,10 @@
-# Samfred Charge
+# PlugSpot
 
 Find a charger. Book your slot. Drive on.
 
-An installable, mobile first PWA for EV drivers and station operators in Nigeria. Built for the PowerTech Nigeria internal engineering hackathon.
+An installable, mobile first PWA for EV drivers and station operators in Nigeria.
+
+**Built for PowerTech Nigeria.** PlugSpot is a PowerTech Nigeria product.
 
 ## Highlights
 
@@ -70,8 +72,8 @@ Prereqs: Node 20+ (Node 22 recommended), a Supabase project, a Resend account (o
 
 ### Demo accounts
 
-- Driver: `driver@demo.samfred.com` / `Demo1234!`
-- Operator: `operator@demo.samfred.com` / `Demo1234!`
+- Driver: `driver@demo.powertech.ng` / `Demo1234!`
+- Operator: `operator@demo.powertech.ng` / `Demo1234!`
 
 ## Environment variables
 
@@ -81,9 +83,25 @@ Prereqs: Node 20+ (Node 22 recommended), a Supabase project, a Resend account (o
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | client + server |
 | `SUPABASE_SECRET_KEY` | server only (used by `scripts/seed.ts` and never imported by client) |
 | `SUPABASE_DB_URL` | migrations |
-| `RESEND_API_KEY` | server only (booking email) |
-| `EMAIL_FROM` | server |
-| `NEXT_PUBLIC_APP_URL` | client + server |
+| `RESEND_API_KEY` | server only (booking email + auth email via Supabase SMTP) |
+| `EMAIL_FROM` | server, e.g. `PlugSpot <bookings@samfredrobotics.com>` |
+| `NEXT_PUBLIC_APP_URL` | client + server, used as `emailRedirectTo` base |
+
+### Email setup (Resend + Supabase Auth)
+
+1. Verify your sending domain in Resend (this project uses `samfredrobotics.com`).
+2. Put the real `RESEND_API_KEY` and `EMAIL_FROM` in `.env.local`. The `.env.example` shows the expected shape but no real values.
+3. Booking emails are sent from the server through Resend using `EMAIL_FROM`.
+4. Supabase Auth sends signup and password reset emails through Resend SMTP. Configure that in the Supabase dashboard: Authentication > Emails > SMTP settings. Host: `smtp.resend.com`, port `465`, username `resend`, password: your Resend API key.
+5. Paste the two branded templates from `supabase/templates/` into Supabase > Authentication > Emails > Templates (Confirm signup and Reset password). Both link to `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=...` which is verified server side at `src/app/auth/confirm/route.ts`.
+6. Test the pipeline: `npm run test:email` sends a real message to the address you pass on the CLI (defaults to `adetayosaka045@gmail.com`).
+
+## Auth flows
+
+- `/sign-up` posts to Supabase with `emailRedirectTo: NEXT_PUBLIC_APP_URL/auth/confirm`, then routes to `/auth/check-email` with an animated "Check your email" screen and a resend button on a 60 second cooldown.
+- `/auth/confirm` calls `supabase.auth.verifyOtp({ token_hash, type })`, then routes the user to their role home (driver or operator). Failures land on `/auth/error` with a friendly message.
+- `/sign-in` catches the "email not confirmed" error and inlines a Resend confirmation email button.
+- `/auth/forgot-password` sends a password reset email; the recovery link comes back through `/auth/confirm?type=recovery` and hands off to `/auth/reset-password`.
 
 ## Tests
 

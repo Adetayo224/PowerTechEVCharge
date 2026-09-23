@@ -1,4 +1,4 @@
--- Samfred Charge initial schema
+-- PlugSpot initial schema
 create extension if not exists "pgcrypto";
 create extension if not exists btree_gist;
 

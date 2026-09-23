@@ -1,6 +1,6 @@
 {
-  "name": "Samfred Charge",
-  "short_name": "Samfred",
+  "name": "PlugSpot",
+  "short_name": "PlugSpot",
   "description": "Find a charger. Book your slot. Drive on.",
   "start_url": "/",
   "display": "standalone",

@@ -1,5 +1,5 @@
 {
-  "name": "samfred-charge",
+  "name": "plugspot",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -11,6 +11,7 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "seed": "tsx --env-file=.env.local scripts/seed.ts",
+    "test:email": "tsx --env-file=.env.local scripts/test-email.ts",
     "db:push": "psql \"$SUPABASE_DB_URL\" -f supabase/migrations/0001_init.sql && psql \"$SUPABASE_DB_URL\" -f supabase/migrations/0002_rls.sql"
   },
   "dependencies": {

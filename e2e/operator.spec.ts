@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-const OPERATOR = { email: "operator@demo.samfred.com", password: "Demo1234!" };
+const OPERATOR = { email: "operator@demo.powertech.ng", password: "Demo1234!" };
 
 test("operator signs in, sets a charger offline, sees offline badge", async ({ page }) => {
   await page.goto("/sign-in");

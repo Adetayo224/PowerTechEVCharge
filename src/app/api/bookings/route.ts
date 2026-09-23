@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
         await sendBookingEmail({
           to: email,
           reference: booking.reference,
-          stationName: charger.stations?.name ?? "Samfred station",
+          stationName: charger.stations?.name ?? "PlugSpot station",
           address: charger.stations?.address ?? "",
           chargerLabel: charger.label,
           startISO: (booking.slot as string).split(",")[0].replace(/[\[\(]/, ""),

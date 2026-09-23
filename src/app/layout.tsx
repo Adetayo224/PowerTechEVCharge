@@ -11,11 +11,11 @@ const jakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Samfred Charge",
+  title: "PlugSpot",
   description: "Find a charger. Book your slot. Drive on.",
   manifest: "/manifest.webmanifest",
-  applicationName: "Samfred Charge",
-  appleWebApp: { capable: true, statusBarStyle: "black-translucent", title: "Samfred Charge" },
+  applicationName: "PlugSpot",
+  appleWebApp: { capable: true, statusBarStyle: "black-translucent", title: "PlugSpot" },
   icons: {
     icon: [{ url: "/icons/icon.svg", type: "image/svg+xml" }],
     apple: [{ url: "/icons/icon.svg" }],

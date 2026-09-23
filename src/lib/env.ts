@@ -4,7 +4,7 @@ export const env = {
   SUPABASE_SECRET_KEY: process.env.SUPABASE_SECRET_KEY || "",
   SUPABASE_DB_URL: process.env.SUPABASE_DB_URL || "",
   RESEND_API_KEY: process.env.RESEND_API_KEY || "",
-  EMAIL_FROM: process.env.EMAIL_FROM || "Samfred Charge <bookings@example.com>",
+  EMAIL_FROM: process.env.EMAIL_FROM || "PlugSpot <bookings@samfredrobotics.com>",
   APP_URL: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
 };
 

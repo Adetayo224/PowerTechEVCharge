@@ -3,6 +3,7 @@ import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "motion/react";
 import { createClient } from "@/lib/supabase/browser";
+import { env } from "@/lib/env";
 import { Logo } from "@/components/logo";
 import { Button, Card, Input, Label } from "@/components/ui";
 import Link from "next/link";
@@ -26,12 +27,14 @@ function SignUpInner() {
     const supabase = createClient();
     const { error } = await supabase.auth.signUp({
       email, password,
-      options: { data: { full_name: name, role, phone } },
+      options: {
+        data: { full_name: name, role, phone },
+        emailRedirectTo: `${env.APP_URL}/auth/confirm`,
+      },
     });
     setLoading(false);
     if (error) return setError(error.message);
-    router.push("/");
-    router.refresh();
+    router.push(`/auth/check-email?email=${encodeURIComponent(email)}&type=signup`);
   }
 
   return (

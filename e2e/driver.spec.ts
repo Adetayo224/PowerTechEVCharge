@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-const DRIVER = { email: "driver@demo.samfred.com", password: "Demo1234!" };
+const DRIVER = { email: "driver@demo.powertech.ng", password: "Demo1234!" };
 
 test("driver signs in, finds a station, opens details and books a slot", async ({ page }) => {
   await page.goto("/sign-in");

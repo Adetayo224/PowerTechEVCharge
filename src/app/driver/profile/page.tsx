@@ -68,6 +68,10 @@ export default function ProfilePage() {
       )}
 
       <Button variant="outline" className="w-full" onClick={signOut}><LogOut className="h-4 w-4" /> Sign out</Button>
+
+      <div className="text-center text-xs text-[var(--muted-foreground)] pt-4">
+        PlugSpot · Built for PowerTech Nigeria
+      </div>
     </div>
   );
 }

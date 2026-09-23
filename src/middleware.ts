@@ -2,7 +2,11 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { env } from "@/lib/env";
 
-const PUBLIC_PATHS = ["/", "/sign-in", "/sign-up", "/offline", "/api/health"];
+const PUBLIC_PATHS = [
+  "/", "/sign-in", "/sign-up", "/offline", "/api/health",
+  "/auth/confirm", "/auth/check-email", "/auth/error",
+  "/auth/forgot-password", "/auth/reset-password",
+];
 
 export async function middleware(req: NextRequest) {
   let response = NextResponse.next({ request: req });
@@ -27,6 +31,7 @@ export async function middleware(req: NextRequest) {
     path.startsWith("/_next") ||
     path.startsWith("/icons") ||
     path.startsWith("/api/auth") ||
+    path.startsWith("/auth/") ||
     path.endsWith(".png") ||
     path.endsWith(".ico") ||
     path.endsWith(".webmanifest") ||

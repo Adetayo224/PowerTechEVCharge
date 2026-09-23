@@ -10,8 +10,8 @@ if (!url || !secret) {
 
 const admin = createClient(url, secret, { auth: { persistSession: false } });
 
-const DRIVER = { email: "driver@demo.samfred.com", password: "Demo1234!", full_name: "Ada Driver", role: "driver" as const };
-const OPERATOR = { email: "operator@demo.samfred.com", password: "Demo1234!", full_name: "Segun Operator", role: "operator" as const };
+const DRIVER = { email: "driver@demo.powertech.ng", password: "Demo1234!", full_name: "Ada Driver", role: "driver" as const };
+const OPERATOR = { email: "operator@demo.powertech.ng", password: "Demo1234!", full_name: "Segun Operator", role: "operator" as const };
 
 type NewStation = {
   name: string; address: string; city: string; lat: number; lng: number;
@@ -20,75 +20,75 @@ type NewStation = {
 };
 
 const STATIONS: NewStation[] = [
-  { name: "Samfred Lekki Phase 1", address: "12 Admiralty Way, Lekki", city: "Lagos", lat: 6.4396, lng: 3.4735, amenities: ["Cafe","Restroom","WiFi"], owner: "operator",
+  { name: "PlugSpot Lekki Phase 1", address: "12 Admiralty Way, Lekki", city: "Lagos", lat: 6.4396, lng: 3.4735, amenities: ["Cafe","Restroom","WiFi"], owner: "operator",
     chargers: [
       { label: "A1", connector_type: "CCS2", power_kw: 60, price_per_kwh: 250, status: "online" },
       { label: "A2", connector_type: "Type 2", power_kw: 22, price_per_kwh: 220, status: "online" },
       { label: "A3", connector_type: "CHAdeMO", power_kw: 50, price_per_kwh: 260, status: "offline" },
     ]},
-  { name: "Samfred Victoria Island", address: "1004 Adeola Odeku St, VI", city: "Lagos", lat: 6.4281, lng: 3.4219, amenities: ["Cafe","Lounge"], owner: "operator",
+  { name: "PlugSpot Victoria Island", address: "1004 Adeola Odeku St, VI", city: "Lagos", lat: 6.4281, lng: 3.4219, amenities: ["Cafe","Lounge"], owner: "operator",
     chargers: [
       { label: "B1", connector_type: "CCS2", power_kw: 120, price_per_kwh: 300, status: "online" },
       { label: "B2", connector_type: "CCS2", power_kw: 120, price_per_kwh: 300, status: "online" },
     ]},
-  { name: "Samfred Ikeja GRA", address: "Mobolaji Bank Anthony Way, Ikeja", city: "Lagos", lat: 6.5834, lng: 3.3527, amenities: ["Restroom","Mall"], owner: "operator",
+  { name: "PlugSpot Ikeja GRA", address: "Mobolaji Bank Anthony Way, Ikeja", city: "Lagos", lat: 6.5834, lng: 3.3527, amenities: ["Restroom","Mall"], owner: "operator",
     chargers: [
       { label: "C1", connector_type: "Type 2", power_kw: 22, price_per_kwh: 200, status: "online" },
       { label: "C2", connector_type: "CCS2", power_kw: 60, price_per_kwh: 240, status: "unavailable" },
     ]},
-  { name: "Samfred Yaba Tech Hub", address: "Herbert Macaulay Way, Yaba", city: "Lagos", lat: 6.5158, lng: 3.3711, amenities: ["Cafe","WiFi","Co working"], owner: "operator",
+  { name: "PlugSpot Yaba Tech Hub", address: "Herbert Macaulay Way, Yaba", city: "Lagos", lat: 6.5158, lng: 3.3711, amenities: ["Cafe","WiFi","Co working"], owner: "operator",
     chargers: [
       { label: "D1", connector_type: "CCS2", power_kw: 50, price_per_kwh: 230, status: "online" },
       { label: "D2", connector_type: "Type 2", power_kw: 22, price_per_kwh: 210, status: "online" },
     ]},
-  { name: "Samfred Ajah", address: "Sangotedo, Ajah", city: "Lagos", lat: 6.4661, lng: 3.5900, amenities: ["Mall","Restroom"], owner: "operator",
+  { name: "PlugSpot Ajah", address: "Sangotedo, Ajah", city: "Lagos", lat: 6.4661, lng: 3.5900, amenities: ["Mall","Restroom"], owner: "operator",
     chargers: [
       { label: "E1", connector_type: "CCS2", power_kw: 60, price_per_kwh: 250, status: "online" },
       { label: "E2", connector_type: "GB/T", power_kw: 30, price_per_kwh: 190, status: "online" },
     ]},
-  { name: "Samfred Ikoyi", address: "Awolowo Rd, Ikoyi", city: "Lagos", lat: 6.4531, lng: 3.4353, amenities: ["Cafe"], owner: "operator",
+  { name: "PlugSpot Ikoyi", address: "Awolowo Rd, Ikoyi", city: "Lagos", lat: 6.4531, lng: 3.4353, amenities: ["Cafe"], owner: "operator",
     chargers: [
       { label: "F1", connector_type: "CCS2", power_kw: 120, price_per_kwh: 320, status: "online" },
     ]},
-  { name: "Samfred Surulere", address: "Adeniran Ogunsanya, Surulere", city: "Lagos", lat: 6.5000, lng: 3.3560, amenities: ["Mall"], owner: "operator",
+  { name: "PlugSpot Surulere", address: "Adeniran Ogunsanya, Surulere", city: "Lagos", lat: 6.5000, lng: 3.3560, amenities: ["Mall"], owner: "operator",
     chargers: [
       { label: "G1", connector_type: "Type 2", power_kw: 22, price_per_kwh: 200, status: "online" },
       { label: "G2", connector_type: "CCS2", power_kw: 50, price_per_kwh: 240, status: "offline" },
     ]},
-  { name: "Samfred Wuse 2", address: "Aminu Kano Cres, Wuse 2", city: "Abuja", lat: 9.0765, lng: 7.4666, amenities: ["Cafe","Lounge"], owner: "operator",
+  { name: "PlugSpot Wuse 2", address: "Aminu Kano Cres, Wuse 2", city: "Abuja", lat: 9.0765, lng: 7.4666, amenities: ["Cafe","Lounge"], owner: "operator",
     chargers: [
       { label: "H1", connector_type: "CCS2", power_kw: 120, price_per_kwh: 310, status: "online" },
       { label: "H2", connector_type: "CCS2", power_kw: 60, price_per_kwh: 260, status: "online" },
     ]},
-  { name: "Samfred Maitama", address: "Aguiyi Ironsi St, Maitama", city: "Abuja", lat: 9.0850, lng: 7.4894, amenities: ["Restroom"], owner: "operator",
+  { name: "PlugSpot Maitama", address: "Aguiyi Ironsi St, Maitama", city: "Abuja", lat: 9.0850, lng: 7.4894, amenities: ["Restroom"], owner: "operator",
     chargers: [
       { label: "I1", connector_type: "Type 2", power_kw: 22, price_per_kwh: 220, status: "online" },
       { label: "I2", connector_type: "CHAdeMO", power_kw: 50, price_per_kwh: 260, status: "online" },
     ]},
-  { name: "Samfred Garki", address: "Ahmadu Bello Way, Garki", city: "Abuja", lat: 9.0342, lng: 7.4894, amenities: ["Mall"], owner: "operator",
+  { name: "PlugSpot Garki", address: "Ahmadu Bello Way, Garki", city: "Abuja", lat: 9.0342, lng: 7.4894, amenities: ["Mall"], owner: "operator",
     chargers: [
       { label: "J1", connector_type: "CCS2", power_kw: 60, price_per_kwh: 240, status: "online" },
     ]},
-  { name: "Samfred Ring Road Ibadan", address: "Ring Road, Ibadan", city: "Ibadan", lat: 7.3646, lng: 3.9074, amenities: ["Restroom","Cafe"], owner: "operator",
+  { name: "PlugSpot Ring Road Ibadan", address: "Ring Road, Ibadan", city: "Ibadan", lat: 7.3646, lng: 3.9074, amenities: ["Restroom","Cafe"], owner: "operator",
     chargers: [
       { label: "K1", connector_type: "CCS2", power_kw: 60, price_per_kwh: 230, status: "online" },
       { label: "K2", connector_type: "Type 2", power_kw: 22, price_per_kwh: 190, status: "online" },
     ]},
-  { name: "Samfred Bodija Ibadan", address: "Awolowo Ave, Bodija", city: "Ibadan", lat: 7.4269, lng: 3.9042, amenities: ["Cafe"], owner: "operator",
+  { name: "PlugSpot Bodija Ibadan", address: "Awolowo Ave, Bodija", city: "Ibadan", lat: 7.4269, lng: 3.9042, amenities: ["Cafe"], owner: "operator",
     chargers: [
       { label: "L1", connector_type: "Type 2", power_kw: 22, price_per_kwh: 200, status: "unavailable" },
       { label: "L2", connector_type: "CCS2", power_kw: 50, price_per_kwh: 240, status: "online" },
     ]},
-  { name: "Samfred Ogbomoso Central", address: "Owode Rd, Ogbomoso", city: "Ogbomoso", lat: 8.1339, lng: 4.2436, amenities: ["Restroom"], owner: "operator",
+  { name: "PlugSpot Ogbomoso Central", address: "Owode Rd, Ogbomoso", city: "Ogbomoso", lat: 8.1339, lng: 4.2436, amenities: ["Restroom"], owner: "operator",
     chargers: [
       { label: "M1", connector_type: "CCS2", power_kw: 60, price_per_kwh: 220, status: "online" },
       { label: "M2", connector_type: "GB/T", power_kw: 30, price_per_kwh: 180, status: "online" },
     ]},
-  { name: "Samfred LAUTECH Ogbomoso", address: "LAUTECH Main Gate, Ogbomoso", city: "Ogbomoso", lat: 8.1652, lng: 4.2643, amenities: ["Cafe","WiFi"], owner: "operator",
+  { name: "PlugSpot LAUTECH Ogbomoso", address: "LAUTECH Main Gate, Ogbomoso", city: "Ogbomoso", lat: 8.1652, lng: 4.2643, amenities: ["Cafe","WiFi"], owner: "operator",
     chargers: [
       { label: "N1", connector_type: "Type 2", power_kw: 22, price_per_kwh: 190, status: "online" },
     ]},
-  { name: "Samfred Apapa", address: "Wharf Rd, Apapa", city: "Lagos", lat: 6.4488, lng: 3.3644, amenities: ["Truck Park"], owner: "operator",
+  { name: "PlugSpot Apapa", address: "Wharf Rd, Apapa", city: "Lagos", lat: 6.4488, lng: 3.3644, amenities: ["Truck Park"], owner: "operator",
     chargers: [
       { label: "O1", connector_type: "CCS2", power_kw: 120, price_per_kwh: 300, status: "online" },
       { label: "O2", connector_type: "CCS2", power_kw: 120, price_per_kwh: 300, status: "offline" },
@@ -111,7 +111,7 @@ async function ensureUser(email: string, password: string, full_name: string, ro
 }
 
 async function main() {
-  console.log("Seeding Samfred Charge...");
+  console.log("Seeding PlugSpot...");
   const operatorId = await ensureUser(OPERATOR.email, OPERATOR.password, OPERATOR.full_name, OPERATOR.role);
   const driverId = await ensureUser(DRIVER.email, DRIVER.password, DRIVER.full_name, DRIVER.role);
   console.log("Users ready:", { operatorId, driverId });

@@ -4,10 +4,19 @@
       <stop offset="0" stop-color="#10B981"/>
       <stop offset="1" stop-color="#047857"/>
     </linearGradient>
+    <linearGradient id="gloss" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
   </defs>
   <rect width="512" height="512" rx="112" fill="url(#g)"/>
-  <path d="M280 60L110 300h120l-50 160 190-260H240l40-140z" fill="white"/>
-  <circle cx="380" cy="380" r="48" fill="white" opacity="0.95"/>
-  <rect x="360" y="332" width="14" height="30" rx="6" fill="url(#g)"/>
-  <rect x="390" y="332" width="14" height="30" rx="6" fill="url(#g)"/>
+  <rect width="512" height="240" rx="112" fill="url(#gloss)"/>
+  <!-- Location pin -->
+  <path d="M256 88c-72 0-130 55-130 122 0 92 130 218 130 218s130-126 130-218C386 143 328 88 256 88z" fill="#ffffff"/>
+  <!-- Plug body inside pin -->
+  <rect x="198" y="152" width="116" height="102" rx="22" fill="url(#g)"/>
+  <rect x="216" y="176" width="18" height="34" rx="7" fill="#ffffff"/>
+  <rect x="278" y="176" width="18" height="34" rx="7" fill="#ffffff"/>
+  <rect x="234" y="254" width="44" height="22" rx="8" fill="url(#g)"/>
+  <rect x="244" y="276" width="24" height="30" rx="7" fill="url(#g)"/>
 </svg>
