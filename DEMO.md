@@ -2,11 +2,11 @@
 
 Total time: about 5 minutes. Open two browser windows side by side at phone width (390 px) so you can show real time updates.
 
-**Live app:** https://ev.samfredrobotics.com
+**Live app:** https://plugspot.samfredrobotics.com
 
 ## 0. Setup (once before the demo)
 
-1. Open https://ev.samfredrobotics.com in two windows (or `npm run dev` and http://localhost:3000 for the local version).
+1. Open https://plugspot.samfredrobotics.com in two windows (or `npm run dev` and http://localhost:3000 for the local version).
 2. Left window: sign in as `driver@demo.powertech.ng` / `Demo1234!`
 3. Right window: sign in as `operator@demo.powertech.ng` / `Demo1234!`
 
@@ -58,6 +58,6 @@ Total time: about 5 minutes. Open two browser windows side by side at phone widt
 
 - Demo driver: `driver@demo.powertech.ng` / `Demo1234!`
 - Demo operator: `operator@demo.powertech.ng` / `Demo1234!`
-- Live URL: https://ev.samfredrobotics.com
+- Live URL: https://plugspot.samfredrobotics.com
 - Local URL: http://localhost:3000
 - Reset demo data: `npm run seed`

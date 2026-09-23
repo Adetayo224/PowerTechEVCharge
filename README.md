@@ -2,7 +2,7 @@
 
 Find a charger. Book your slot. Drive on.
 
-**Live demo:** https://ev.samfredrobotics.com
+**Live demo:** https://plugspot.samfredrobotics.com
 
 An installable, mobile first PWA for EV drivers and station operators in Nigeria.
 
@@ -116,12 +116,12 @@ Unit tests cover slot generation (window respect, past slot rejection, taken slo
 
 ## Deployment
 
-The production app is deployed on Vercel at **https://ev.samfredrobotics.com** with the custom domain routed through Cloudflare DNS (CNAME `ev` → the Vercel target host, proxy off).
+The production app is deployed on Vercel at **https://plugspot.samfredrobotics.com** with the custom domain routed through Cloudflare DNS (CNAME `plugspot` → the Vercel target host, proxy off).
 
 ### Vercel setup
 
 1. Import `Adetayo224/PowerTechEVCharge` in Vercel.
-2. Under Project Settings > Domains, add `ev.samfredrobotics.com` and follow Vercel's DNS instructions. In Cloudflare, set a CNAME on the `ev` subdomain to the value Vercel gives you and leave the proxy toggle off so Vercel can issue the TLS certificate.
+2. Under Project Settings > Domains, add `plugspot.samfredrobotics.com` and follow Vercel's DNS instructions. In Cloudflare, set a CNAME on the `plugspot` subdomain to the value Vercel gives you and leave the proxy toggle off so Vercel can issue the TLS certificate.
 3. Under Project Settings > Environment Variables, set the same names listed in the table above (no values shown here):
    - `NEXT_PUBLIC_SUPABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
@@ -129,16 +129,16 @@ The production app is deployed on Vercel at **https://ev.samfredrobotics.com** w
    - `SUPABASE_DB_URL`
    - `RESEND_API_KEY`
    - `EMAIL_FROM`
-   - `NEXT_PUBLIC_APP_URL` — production value is `https://ev.samfredrobotics.com`
+   - `NEXT_PUBLIC_APP_URL` — production value is `https://plugspot.samfredrobotics.com`
 4. Migrations must be applied to your Supabase project before the first request.
 
 ### Supabase URL configuration
 
 Under Authentication > URL Configuration in the Supabase dashboard:
 
-- **Site URL:** `https://ev.samfredrobotics.com`
+- **Site URL:** `https://plugspot.samfredrobotics.com`
 - **Additional redirect URLs:**
-  - `https://ev.samfredrobotics.com/auth/confirm`
+  - `https://plugspot.samfredrobotics.com/auth/confirm`
   - `http://localhost:3000/auth/confirm` (for local development)
 
 The signup and password reset flows send `emailRedirectTo` values under this base, so every listed URL must appear in the allowlist above.

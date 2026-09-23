@@ -67,7 +67,7 @@ export default async function OGImage() {
             fontSize: 24,
           }}
         >
-          <div>ev.samfredrobotics.com</div>
+          <div>plugspot.samfredrobotics.com</div>
           <div>Built for PowerTech Nigeria</div>
         </div>
       </div>

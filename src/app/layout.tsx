@@ -10,7 +10,7 @@ const jakarta = Plus_Jakarta_Sans({
   display: "swap",
 });
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://ev.samfredrobotics.com";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://plugspot.samfredrobotics.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(APP_URL),
