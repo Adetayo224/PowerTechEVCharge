@@ -10,8 +10,14 @@ const jakarta = Plus_Jakarta_Sans({
   display: "swap",
 });
 
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://ev.samfredrobotics.com";
+
 export const metadata: Metadata = {
-  title: "PlugSpot",
+  metadataBase: new URL(APP_URL),
+  title: {
+    default: "PlugSpot",
+    template: "%s · PlugSpot",
+  },
   description: "Find a charger. Book your slot. Drive on.",
   manifest: "/manifest.webmanifest",
   applicationName: "PlugSpot",
@@ -19,6 +25,20 @@ export const metadata: Metadata = {
   icons: {
     icon: [{ url: "/icons/icon.svg", type: "image/svg+xml" }],
     apple: [{ url: "/icons/icon.svg" }],
+  },
+  openGraph: {
+    type: "website",
+    url: APP_URL,
+    siteName: "PlugSpot",
+    title: "PlugSpot",
+    description: "Find a charger. Book your slot. Drive on.",
+    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "PlugSpot" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "PlugSpot",
+    description: "Find a charger. Book your slot. Drive on.",
+    images: ["/opengraph-image"],
   },
 };
 

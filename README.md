@@ -2,6 +2,8 @@
 
 Find a charger. Book your slot. Drive on.
 
+**Live demo:** https://ev.samfredrobotics.com
+
 An installable, mobile first PWA for EV drivers and station operators in Nigeria.
 
 **Built for PowerTech Nigeria.** PlugSpot is a PowerTech Nigeria product.
@@ -112,11 +114,34 @@ npm run test:e2e   # Playwright driver + operator flows against a running dev se
 
 Unit tests cover slot generation (window respect, past slot rejection, taken slot detection), pricing, references, and formatters. The integration suite exercises `create_booking` for the happy path and drives two concurrent identical bookings to prove exactly one succeeds. E2E tests hit the seeded demo accounts.
 
-## Deploy (Vercel)
+## Deployment
 
-1. Import the repo in Vercel.
-2. Set the environment variables above in Project Settings > Environment Variables.
-3. Deploy. Migrations must be applied to your Supabase project beforehand.
+The production app is deployed on Vercel at **https://ev.samfredrobotics.com** with the custom domain routed through Cloudflare DNS (CNAME `ev` → the Vercel target host, proxy off).
+
+### Vercel setup
+
+1. Import `Adetayo224/PowerTechEVCharge` in Vercel.
+2. Under Project Settings > Domains, add `ev.samfredrobotics.com` and follow Vercel's DNS instructions. In Cloudflare, set a CNAME on the `ev` subdomain to the value Vercel gives you and leave the proxy toggle off so Vercel can issue the TLS certificate.
+3. Under Project Settings > Environment Variables, set the same names listed in the table above (no values shown here):
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+   - `SUPABASE_SECRET_KEY`
+   - `SUPABASE_DB_URL`
+   - `RESEND_API_KEY`
+   - `EMAIL_FROM`
+   - `NEXT_PUBLIC_APP_URL` — production value is `https://ev.samfredrobotics.com`
+4. Migrations must be applied to your Supabase project before the first request.
+
+### Supabase URL configuration
+
+Under Authentication > URL Configuration in the Supabase dashboard:
+
+- **Site URL:** `https://ev.samfredrobotics.com`
+- **Additional redirect URLs:**
+  - `https://ev.samfredrobotics.com/auth/confirm`
+  - `http://localhost:3000/auth/confirm` (for local development)
+
+The signup and password reset flows send `emailRedirectTo` values under this base, so every listed URL must appear in the allowlist above.
 
 ## Roadmap
 
