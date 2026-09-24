@@ -163,7 +163,10 @@ export function NavigationView({ destination, bookingId, backHref = "/driver/hom
           supabase.from("stations").select("*, chargers(*)"),
           supabase.from("charger_state").select("*"),
         ]);
-        const stations = (stationsData as (Station & { chargers: Charger[] })[]) ?? [];
+        const stations: (Station & { chargers: Charger[] })[] = ((stationsData ?? []) as Array<Station & { chargers?: Charger[] | null }>).map((s) => ({
+          ...s,
+          chargers: Array.isArray(s.chargers) ? s.chargers : [],
+        }));
         const states = new Map<string, ChargerState>();
         (statesData as ChargerState[] | undefined)?.forEach((s) => states.set(s.charger_id, s));
 

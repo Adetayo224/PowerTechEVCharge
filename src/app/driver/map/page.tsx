@@ -38,7 +38,13 @@ export default function DriverMapPage() {
     (async () => {
       const supabase = createClient();
       const { data } = await supabase.from("stations").select("*, chargers(*)");
-      setStations((data as St[]) ?? []);
+      // PostgREST returns chargers as null when there are none; every downstream
+      // .filter / .some / .reduce assumes an array, so normalise here.
+      const normalised: St[] = ((data ?? []) as Partial<St>[]).map((s) => ({
+        ...(s as St),
+        chargers: Array.isArray(s.chargers) ? s.chargers : [],
+      }));
+      setStations(normalised);
       const { data: st } = await supabase.from("charger_state").select("*");
       const map: Record<string, ChargerState> = {};
       (st as ChargerState[] | null)?.forEach((s) => { map[s.charger_id] = s; });
