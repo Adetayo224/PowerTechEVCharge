@@ -12,15 +12,17 @@
     "test:e2e": "playwright test",
     "seed": "tsx --env-file=.env.local scripts/seed.ts",
     "test:email": "tsx --env-file=.env.local scripts/test-email.ts",
-    "db:push": "psql \"$SUPABASE_DB_URL\" -f supabase/migrations/0001_init.sql && psql \"$SUPABASE_DB_URL\" -f supabase/migrations/0002_rls.sql && psql \"$SUPABASE_DB_URL\" -f supabase/migrations/0003_charger_state.sql && psql \"$SUPABASE_DB_URL\" -f supabase/migrations/0004_fix_booking.sql"
+    "db:push": "psql \"$SUPABASE_DB_URL\" -f supabase/migrations/0001_init.sql && psql \"$SUPABASE_DB_URL\" -f supabase/migrations/0002_rls.sql && psql \"$SUPABASE_DB_URL\" -f supabase/migrations/0003_charger_state.sql && psql \"$SUPABASE_DB_URL\" -f supabase/migrations/0004_fix_booking.sql && psql \"$SUPABASE_DB_URL\" -f supabase/migrations/0005_notifications.sql"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.109.0",
+    "@types/leaflet": "^1.9.22",
     "@types/qrcode": "^1.5.6",
     "clsx": "^2.1.1",
     "date-fns": "^4.4.0",
     "date-fns-tz": "^3.2.0",
+    "leaflet": "^1.9.4",
     "lucide-react": "^1.47.0",
     "motion": "^13.4.1",
     "next": "16.3.6",

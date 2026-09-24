@@ -1,7 +1,8 @@
 import { NextRequest } from "next/server";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
-import { sendBookingEmail } from "@/lib/email";
+import { sendBookingEmail, sendOperatorBookingEmail } from "@/lib/email";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 const Body = z.object({
   charger_id: z.string().uuid(),
@@ -29,22 +30,50 @@ export async function POST(req: NextRequest) {
 
   const booking = Array.isArray(data) ? data[0] : data;
 
-  // send confirmation email if configured, do not block on failure
+  // Send confirmation email to the driver and a heads up to the operator.
+  // Never block booking creation on email failures.
   try {
     if (booking?.reference) {
-      const { data: charger } = await supabase.from("chargers").select("*, stations(*)").eq("id", booking.charger_id).maybeSingle();
-      const email = user.email;
-      if (email && charger) {
+      const { data: charger } = await supabase
+        .from("chargers")
+        .select("*, stations(*)")
+        .eq("id", booking.charger_id)
+        .maybeSingle();
+      const driverEmail = user.email;
+      const startISO = (booking.slot as string).split(",")[0].replace(/[\[\(]/, "");
+      const stationName = charger?.stations?.name ?? "PlugSpot station";
+      const address = charger?.stations?.address ?? "";
+      const label = charger?.label ?? "";
+      const cost = Number(booking.estimated_cost);
+      const kwh = Number(booking.estimated_kwh);
+      if (driverEmail && charger) {
         await sendBookingEmail({
-          to: email,
-          reference: booking.reference,
-          stationName: charger.stations?.name ?? "PlugSpot station",
-          address: charger.stations?.address ?? "",
-          chargerLabel: charger.label,
-          startISO: (booking.slot as string).split(",")[0].replace(/[\[\(]/, ""),
-          cost: Number(booking.estimated_cost),
-          kwh: Number(booking.estimated_kwh),
+          to: driverEmail, reference: booking.reference, stationName, address,
+          chargerLabel: label, startISO, cost, kwh,
         });
+      }
+      // Look up the operator's email via the service role so we can email them too.
+      try {
+        const ownerId: string | undefined = charger?.stations?.owner_id;
+        if (ownerId) {
+          const admin = createAdminClient();
+          const { data: owner } = await admin.auth.admin.getUserById(ownerId);
+          const opEmail = owner?.user?.email;
+          if (opEmail) {
+            await sendOperatorBookingEmail({
+              to: opEmail,
+              reference: booking.reference,
+              stationName,
+              chargerLabel: label,
+              startISO,
+              driverEmail: driverEmail ?? "",
+              cost,
+              kwh,
+            });
+          }
+        }
+      } catch (e) {
+        console.error("operator email failed", e);
       }
     }
   } catch (e) {

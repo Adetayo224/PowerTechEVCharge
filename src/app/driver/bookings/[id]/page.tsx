@@ -7,6 +7,7 @@ import { Button, Card, Skeleton } from "@/components/ui";
 import { formatSlotLong } from "@/lib/booking";
 import { formatNaira } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/browser";
+import Link from "next/link";
 
 type Booking = {
   id: string; reference: string; slot: string; status: string;
@@ -41,7 +42,7 @@ function Inner({ id }: { id: string }) {
   async function cancel() {
     setCancelling(true);
     const res = await fetch(`/api/bookings/${id}`, {
-      method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify({ status: "cancelled" }),
+      method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify({ action: "cancel" }),
     });
     setCancelling(false);
     if (res.ok) router.push("/driver/bookings");
@@ -86,7 +87,12 @@ function Inner({ id }: { id: string }) {
       </Card>
 
       {booking.status === "confirmed" && start > new Date() && (
-        <Button variant="outline" className="w-full" onClick={cancel} disabled={cancelling}>{cancelling ? "Cancelling" : "Cancel booking"}</Button>
+        <div className="flex flex-col gap-2">
+          <Link href={`/driver/bookings/${booking.id}/reschedule`}>
+            <Button variant="outline" className="w-full">Reschedule</Button>
+          </Link>
+          <Button variant="outline" className="w-full" onClick={cancel} disabled={cancelling}>{cancelling ? "Cancelling" : "Cancel booking"}</Button>
+        </div>
       )}
     </div>
   );

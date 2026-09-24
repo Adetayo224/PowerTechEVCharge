@@ -7,6 +7,7 @@ import { AnimatedNumber } from "@/components/counter";
 import { createClient } from "@/lib/supabase/browser";
 import { formatNaira } from "@/lib/utils";
 import { formatInTimeZone } from "date-fns-tz";
+import { NotificationBell } from "@/components/notification-bell";
 
 type Booking = { id: string; slot: string; status: string; estimated_cost: number; created_at: string; chargers: { label: string; stations: { name: string } } };
 
@@ -55,7 +56,10 @@ export default function OperatorDashboard() {
 
   return (
     <div className="max-w-md mx-auto p-4 pt-6 safe-top space-y-4">
-      <h1 className="text-2xl font-bold">Dashboard</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold">Dashboard</h1>
+        <NotificationBell />
+      </div>
       <div className="grid grid-cols-2 gap-3">
         <Stat label="Stations" icon={Building2} value={stations} />
         <Stat label="Online chargers" icon={Zap} value={chargersOnline} suffix={`/${chargersTotal}`} />

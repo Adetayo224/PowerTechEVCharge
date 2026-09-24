@@ -270,8 +270,6 @@ export function NavigationView({ destination, bookingId, backHref = "/driver/hom
           car={location}
           route={route ? { geometry: route.geometry, bounds: route.bounds } : null}
           zoom={running ? 17 : 14}
-          pitch={running ? 55 : 0}
-          bearing={running ? location.bearing ?? 0 : 0}
           followCar={running}
         />
       </div>
