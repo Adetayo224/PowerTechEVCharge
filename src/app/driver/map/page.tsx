@@ -37,7 +37,7 @@ export default function DriverMapPage() {
   useEffect(() => {
     (async () => {
       const supabase = createClient();
-      const { data } = await supabase.from("stations").select("*, chargers(*)").ilike("name", "PlugSpot%");
+      const { data } = await supabase.from("stations").select("*, chargers(*)");
       setStations((data as St[]) ?? []);
       const { data: st } = await supabase.from("charger_state").select("*");
       const map: Record<string, ChargerState> = {};

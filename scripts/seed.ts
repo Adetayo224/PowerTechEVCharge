@@ -182,11 +182,24 @@ async function main() {
   }).eq("id", driverId);
   console.log("Users ready", { operatorId, driverId });
 
-  // Clean prior demo data owned by operator (cascades to chargers, availability, bookings, charger_state).
-  const { data: prior } = await admin.from("stations").select("id").eq("owner_id", operatorId);
-  if (prior && prior.length) {
-    console.log(`Removing ${prior.length} prior station(s)`);
-    await admin.from("stations").delete().in("id", prior.map((s) => s.id));
+  // Clean prior demo data. This removes:
+  //   1. Every station owned by the demo operator.
+  //   2. Every station named "PlugSpot ..." regardless of owner (leftover demo rows
+  //      from previous seed runs that landed on other operator accounts).
+  // Real operator stations with any other name are left untouched.
+  const { data: priorOwned } = await admin.from("stations").select("id").eq("owner_id", operatorId);
+  if (priorOwned && priorOwned.length) {
+    console.log(`Removing ${priorOwned.length} station(s) owned by demo operator`);
+    await admin.from("stations").delete().in("id", priorOwned.map((s) => s.id));
+  }
+  const { data: leftoverDemo } = await admin
+    .from("stations")
+    .select("id, name, owner_id")
+    .ilike("name", "PlugSpot%");
+  if (leftoverDemo && leftoverDemo.length) {
+    const ids = leftoverDemo.map((s) => s.id);
+    console.log(`Removing ${ids.length} leftover PlugSpot demo station(s)`);
+    await admin.from("stations").delete().in("id", ids);
   }
 
   for (const st of STATIONS) {

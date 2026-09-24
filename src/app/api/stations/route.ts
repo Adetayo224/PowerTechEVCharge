@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
   const availableNow = sp.get("availableNow") === "1";
 
   const supabase = await createClient();
-  let query = supabase.from("stations").select("*, chargers(*)").ilike("name", "PlugSpot%");
+  let query = supabase.from("stations").select("*, chargers(*)");
   if (city) query = query.eq("city", city);
   const { data, error } = await query;
   if (error) return Response.json({ error: error.message }, { status: 400 });

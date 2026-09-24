@@ -160,7 +160,7 @@ export function NavigationView({ destination, bookingId, backHref = "/driver/hom
       try {
         const supabase = createClient();
         const [{ data: stationsData }, { data: statesData }] = await Promise.all([
-          supabase.from("stations").select("*, chargers(*)").ilike("name", "PlugSpot%"),
+          supabase.from("stations").select("*, chargers(*)"),
           supabase.from("charger_state").select("*"),
         ]);
         const stations = (stationsData as (Station & { chargers: Charger[] })[]) ?? [];
