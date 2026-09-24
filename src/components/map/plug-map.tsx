@@ -23,28 +23,37 @@ export type CarMarker = { lng: number; lat: number; bearing?: number };
 export type RouteLine = { geometry: LineString; bounds?: [number, number, number, number] };
 export type Basemap = "streets" | "dark" | "satellite" | "terrain";
 
-const TILES: Record<Basemap, { url: string; attribution: string; maxZoom: number; subdomains?: string; dark?: boolean }> = {
+// Every entry has an explicit subdomains string. Leaflet's TileLayer default
+// is "abc", but when Leaflet is loaded via the ESM build inside a bundler that
+// default sometimes gets stripped and _getSubdomain() throws
+// "Cannot read properties of undefined (reading 'length')" on the first tile.
+// Passing an explicit value keeps that fatal path closed even when the URL
+// template has no {s} placeholder.
+const TILES: Record<Basemap, { url: string; attribution: string; maxZoom: number; subdomains: string; dark?: boolean }> = {
   streets: {
-    url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+    url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
     attribution: "© OpenStreetMap contributors",
     maxZoom: 19,
+    subdomains: "abc",
   },
   dark: {
-    // OSM standard tiles + CSS filter to darken; keeps us key-free.
-    url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+    url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
     attribution: "© OpenStreetMap contributors",
     maxZoom: 19,
+    subdomains: "abc",
     dark: true,
   },
   satellite: {
     url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
     attribution: "© Esri, Maxar, Earthstar Geographics",
     maxZoom: 19,
+    subdomains: "abc",
   },
   terrain: {
-    url: "https://tile.opentopomap.org/{z}/{x}/{y}.png",
+    url: "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
     attribution: "© OpenStreetMap contributors, © OpenTopoMap (CC BY SA)",
     maxZoom: 17,
+    subdomains: "abc",
   },
 };
 
@@ -142,9 +151,15 @@ export default function PlugMap({
       tileRef.current = Lmod.tileLayer(t.url, {
         attribution: t.attribution,
         maxZoom: t.maxZoom,
-        ...(t.subdomains ? { subdomains: t.subdomains } : {}),
+        subdomains: t.subdomains,
         crossOrigin: true,
       }).addTo(map);
+      // Swallow individual tile 4xx/5xx so a bad tile does not surface as an
+      // unhandled error and unmount the map.
+      tileRef.current.on("tileerror", (ev) => {
+        const e = ev as unknown as { error?: { message?: string } };
+        console.warn("[map tile]", e?.error?.message || "tile failed");
+      });
       if (t.dark) map.getContainer().classList.add("plug-map-dark");
 
       if (onMapClick) map.on("click", (e) => onMapClick(e.latlng.lng, e.latlng.lat));

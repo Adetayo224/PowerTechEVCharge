@@ -6,6 +6,7 @@ const PUBLIC_PATHS = [
   "/", "/sign-in", "/sign-up", "/offline", "/api/health",
   "/auth/confirm", "/auth/check-email", "/auth/error",
   "/auth/forgot-password", "/auth/reset-password",
+  "/sw.js",
 ];
 
 export async function middleware(req: NextRequest) {
@@ -32,6 +33,7 @@ export async function middleware(req: NextRequest) {
     path.startsWith("/icons") ||
     path.startsWith("/api/auth") ||
     path.startsWith("/auth/") ||
+    path === "/sw.js" ||
     path.endsWith(".png") ||
     path.endsWith(".ico") ||
     path.endsWith(".webmanifest") ||
