@@ -6,10 +6,11 @@ import { cn } from "@/lib/utils";
 import {
   Home, Map, CalendarCheck, User,
   LayoutDashboard, Building2, CalendarRange, Settings,
+  Users, ShieldCheck,
   type LucideIcon,
 } from "lucide-react";
 
-const NAVS: Record<"driver" | "operator", { href: string; label: string; icon: LucideIcon }[]> = {
+const NAVS: Record<"driver" | "operator" | "admin", { href: string; label: string; icon: LucideIcon }[]> = {
   driver: [
     { href: "/driver/home", label: "Home", icon: Home },
     { href: "/driver/map", label: "Map", icon: Map },
@@ -22,9 +23,15 @@ const NAVS: Record<"driver" | "operator", { href: string; label: string; icon: L
     { href: "/operator/bookings", label: "Bookings", icon: CalendarRange },
     { href: "/operator/settings", label: "Settings", icon: Settings },
   ],
+  admin: [
+    { href: "/admin/dashboard", label: "Overview", icon: ShieldCheck },
+    { href: "/admin/stations", label: "Stations", icon: Building2 },
+    { href: "/admin/bookings", label: "Bookings", icon: CalendarRange },
+    { href: "/admin/users", label: "Users", icon: Users },
+  ],
 };
 
-export function BottomNav({ role }: { role: "driver" | "operator" }) {
+export function BottomNav({ role }: { role: "driver" | "operator" | "admin" }) {
   const path = usePathname();
   const items = NAVS[role];
   return (

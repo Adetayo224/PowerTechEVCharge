@@ -12,7 +12,7 @@
     "test:e2e": "playwright test",
     "seed": "tsx --env-file=.env.local scripts/seed.ts",
     "test:email": "tsx --env-file=.env.local scripts/test-email.ts",
-    "db:push": "psql \"$SUPABASE_DB_URL\" -f supabase/migrations/0001_init.sql && psql \"$SUPABASE_DB_URL\" -f supabase/migrations/0002_rls.sql && psql \"$SUPABASE_DB_URL\" -f supabase/migrations/0003_charger_state.sql && psql \"$SUPABASE_DB_URL\" -f supabase/migrations/0004_fix_booking.sql && psql \"$SUPABASE_DB_URL\" -f supabase/migrations/0005_notifications.sql"
+    "db:push": "psql \"$SUPABASE_DB_URL\" -f supabase/migrations/0001_init.sql && psql \"$SUPABASE_DB_URL\" -f supabase/migrations/0002_rls.sql && psql \"$SUPABASE_DB_URL\" -f supabase/migrations/0003_charger_state.sql && psql \"$SUPABASE_DB_URL\" -f supabase/migrations/0004_fix_booking.sql && psql \"$SUPABASE_DB_URL\" -f supabase/migrations/0005_notifications.sql && psql \"$SUPABASE_DB_URL\" -f supabase/migrations/0006_admin.sql"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",

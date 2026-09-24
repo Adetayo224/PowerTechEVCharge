@@ -46,10 +46,16 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(url);
   }
 
+  function homeForRole(role?: string) {
+    if (role === "admin") return "/admin/dashboard";
+    if (role === "operator") return "/operator/dashboard";
+    return "/driver/home";
+  }
+
   if (user && (path === "/sign-in" || path === "/sign-up" || path === "/")) {
     const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).maybeSingle();
     const url = req.nextUrl.clone();
-    url.pathname = profile?.role === "operator" ? "/operator/dashboard" : "/driver/home";
+    url.pathname = homeForRole(profile?.role);
     url.search = "";
     return NextResponse.redirect(url);
   }
@@ -58,7 +64,7 @@ export async function middleware(req: NextRequest) {
     const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).maybeSingle();
     if (profile?.role !== "operator") {
       const url = req.nextUrl.clone();
-      url.pathname = "/driver/home";
+      url.pathname = homeForRole(profile?.role);
       return NextResponse.redirect(url);
     }
   }
@@ -66,7 +72,15 @@ export async function middleware(req: NextRequest) {
     const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).maybeSingle();
     if (profile?.role !== "driver") {
       const url = req.nextUrl.clone();
-      url.pathname = "/operator/dashboard";
+      url.pathname = homeForRole(profile?.role);
+      return NextResponse.redirect(url);
+    }
+  }
+  if (user && path.startsWith("/admin")) {
+    const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).maybeSingle();
+    if (profile?.role !== "admin") {
+      const url = req.nextUrl.clone();
+      url.pathname = homeForRole(profile?.role);
       return NextResponse.redirect(url);
     }
   }

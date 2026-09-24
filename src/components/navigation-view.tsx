@@ -52,6 +52,7 @@ export function NavigationView({ destination, bookingId, backHref = "/driver/hom
   const mutedRef = useRef(false);
   useEffect(() => { mutedRef.current = muted; }, [muted]);
   const [running, setRunning] = useState(false);
+  const [chromeVisible, setChromeVisible] = useState(true);
   const [speedMult, setSpeedMult] = useState<1 | 5 | 20>(5);
   const [progressM, setProgressM] = useState(0);
   const [stepIdx, setStepIdx] = useState(0);
@@ -274,10 +275,35 @@ export function NavigationView({ destination, bookingId, backHref = "/driver/hom
           route={route ? { geometry: route.geometry, bounds: route.bounds } : null}
           zoom={running ? 17 : 14}
           followCar={running}
+          onMapClick={() => setChromeVisible((v) => !v)}
         />
       </div>
 
-      <div className="pointer-events-none absolute inset-x-0 top-0 p-3 safe-top space-y-3 z-20">
+      {/* Floating "show controls" pill when the driver has hidden the chrome */}
+      <AnimatePresence>
+        {!chromeVisible && (
+          <motion.button
+            key="show-chrome"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            onClick={() => setChromeVisible(true)}
+            className="fixed left-1/2 -translate-x-1/2 z-50 h-10 px-4 rounded-full float text-xs font-semibold flex items-center gap-2"
+            style={{ bottom: "calc(env(safe-area-inset-bottom, 0px) + 20px)" }}
+          >
+            <ArrowUp className="h-3.5 w-3.5" /> Show controls
+          </motion.button>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {chromeVisible && (
+      <motion.div
+        key="top-chrome"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -10 }}
+        className="pointer-events-none absolute inset-x-0 top-0 p-3 safe-top space-y-3 z-30">
         <div className="pointer-events-auto flex items-center gap-2">
           <Link href={backHref} onClick={() => cancelSpeech()}>
             <Button variant="outline" size="sm" aria-label="Back"><ArrowLeft className="h-4 w-4" /></Button>
@@ -347,18 +373,30 @@ export function NavigationView({ destination, bookingId, backHref = "/driver/hom
             </div>
           </motion.div>
         )}
-      </div>
+      </motion.div>
+        )}
+      </AnimatePresence>
 
-      <div className="absolute inset-x-0 bottom-0 z-40 safe-bottom pointer-events-none">
+      <AnimatePresence>
+        {chromeVisible && (
+      <motion.div
+        key="bottom-chrome"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 20 }}
+        transition={{ type: "spring", stiffness: 320, damping: 30 }}
+        className="fixed inset-x-0 z-50 pointer-events-none"
+        style={{ bottom: 0, paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
+      >
         <div className="mx-auto max-w-md p-3 pointer-events-auto">
           <div className="float p-4">
             <div className="flex items-center justify-between gap-3">
-              <div>
+              <div className="min-w-0">
                 <div className="text-[10px] uppercase tracking-wider text-[var(--muted-foreground)]">Remaining</div>
-                <div className="text-lg font-bold tabular-nums">{formatDistanceKm(remainingM / 1000)} · {formatDurationMin(remainingMinAt40)}</div>
+                <div className="text-lg font-bold tabular-nums truncate">{formatDistanceKm(remainingM / 1000)} · {formatDurationMin(remainingMinAt40)}</div>
                 <div className="text-xs text-[var(--muted-foreground)]">ETA {eta.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</div>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-shrink-0">
                 {!running ? (
                   <Button size="sm" onClick={start} disabled={!route}><Play className="h-4 w-4" /> {progressM === 0 ? "Start" : "Resume"}</Button>
                 ) : (
@@ -367,7 +405,7 @@ export function NavigationView({ destination, bookingId, backHref = "/driver/hom
                 <Button size="sm" variant="outline" onClick={stop} aria-label="Stop"><Square className="h-4 w-4" /></Button>
               </div>
             </div>
-            <div className="mt-3 flex items-center gap-2">
+            <div className="mt-3 flex items-center gap-2 flex-wrap">
               <span className="text-[10px] uppercase tracking-wider text-[var(--muted-foreground)]">Speed</span>
               {([1, 5, 20] as const).map((m) => (
                 <button key={m} onClick={() => setSpeedMult(m)}
@@ -381,7 +419,9 @@ export function NavigationView({ destination, bookingId, backHref = "/driver/hom
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

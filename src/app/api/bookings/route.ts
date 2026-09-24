@@ -52,28 +52,42 @@ export async function POST(req: NextRequest) {
           chargerLabel: label, startISO, cost, kwh,
         });
       }
-      // Look up the operator's email via the service role so we can email them too.
+      // Fan out to the station owner AND every admin so PlugSpot operators
+      // and the platform admin team both see every booking.
       try {
         const ownerId: string | undefined = charger?.stations?.owner_id;
+        const admin = createAdminClient();
+        const recipients = new Set<string>();
+
         if (ownerId) {
-          const admin = createAdminClient();
           const { data: owner } = await admin.auth.admin.getUserById(ownerId);
           const opEmail = owner?.user?.email;
-          if (opEmail) {
-            await sendOperatorBookingEmail({
-              to: opEmail,
-              reference: booking.reference,
-              stationName,
-              chargerLabel: label,
-              startISO,
-              driverEmail: driverEmail ?? "",
-              cost,
-              kwh,
-            });
-          }
+          if (opEmail) recipients.add(opEmail);
+        }
+
+        // Every user with role = 'admin' also receives the booking heads-up.
+        const { data: adminsRaw } = await admin.from("profiles").select("id").eq("role", "admin");
+        const adminIds = ((adminsRaw ?? []) as Array<{ id: string }>).map((a) => a.id);
+        for (const id of adminIds) {
+          const { data: u } = await admin.auth.admin.getUserById(id);
+          const em = u?.user?.email;
+          if (em) recipients.add(em);
+        }
+
+        for (const to of recipients) {
+          await sendOperatorBookingEmail({
+            to,
+            reference: booking.reference,
+            stationName,
+            chargerLabel: label,
+            startISO,
+            driverEmail: driverEmail ?? "",
+            cost,
+            kwh,
+          });
         }
       } catch (e) {
-        console.error("operator email failed", e);
+        console.error("operator/admin email failed", e);
       }
     }
   } catch (e) {

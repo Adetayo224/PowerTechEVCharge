@@ -27,6 +27,7 @@ const DRIVER = {
   target_percent: 80,
 };
 const OPERATOR = { email: "operator@demo.powertech.ng", password: "Demo1234!", full_name: "Segun Operator", role: "operator" as const };
+const ADMIN = { email: "admin@demo.powertech.ng", password: "Demo1234!", full_name: "PlugSpot Admin", role: "admin" as const };
 
 type Connector = "CCS2" | "Type 2" | "CHAdeMO" | "GB/T";
 type Status = "online" | "offline" | "unavailable";
@@ -153,7 +154,7 @@ const STATIONS: SeedStation[] = [
   },
 ];
 
-async function ensureUser(email: string, password: string, full_name: string, role: "driver" | "operator") {
+async function ensureUser(email: string, password: string, full_name: string, role: "driver" | "operator" | "admin") {
   const { data: list } = await admin.auth.admin.listUsers();
   const existing = list?.users.find((u) => u.email?.toLowerCase() === email.toLowerCase());
   if (existing) {
@@ -173,6 +174,9 @@ async function main() {
 
   const operatorId = await ensureUser(OPERATOR.email, OPERATOR.password, OPERATOR.full_name, OPERATOR.role);
   const driverId = await ensureUser(DRIVER.email, DRIVER.password, DRIVER.full_name, DRIVER.role);
+  const adminId = await ensureUser(ADMIN.email, ADMIN.password, ADMIN.full_name, ADMIN.role);
+  // Force the admin's role, in case the profile already existed with a different role.
+  await admin.from("profiles").update({ role: "admin", full_name: ADMIN.full_name }).eq("id", adminId);
   await admin.from("profiles").update({
     car_model: DRIVER.car_model,
     battery_kwh: DRIVER.battery_kwh,
@@ -264,8 +268,58 @@ async function main() {
     });
   }
 
-  const { count } = await admin.from("stations").select("id", { count: "exact", head: true }).eq("owner_id", operatorId);
-  console.log(`Seed complete. Operator now owns ${count} station(s).`);
+  // A couple of admin-owned, unclaimed stations so an operator signing in for
+  // the first time can pick one from the claim popup.
+  const UNCLAIMED: SeedStation[] = [
+    {
+      name: "Berger Park & Charge",
+      address: "Berger Terminal, Ojodu, Lagos",
+      city: "Lagos",
+      lat: 6.6390, lng: 3.3620,
+      amenities: ["Cafe", "Restroom"],
+      chargers: [
+        { label: "P1", connector_type: "CCS2", power_kw: 60, price_per_kwh: 250, status: "online" },
+        { label: "P2", connector_type: "Type 2", power_kw: 22, price_per_kwh: 210, status: "online" },
+      ],
+    },
+    {
+      name: "Kubwa Highway Charge Stop",
+      address: "Kubwa Expressway, Kubwa, Abuja",
+      city: "Abuja",
+      lat: 9.1592, lng: 7.3243,
+      amenities: ["Restroom"],
+      chargers: [
+        { label: "Q1", connector_type: "CCS2", power_kw: 120, price_per_kwh: 300, status: "online" },
+      ],
+    },
+  ];
+  for (const st of UNCLAIMED) {
+    // Skip if a station with the same name already exists (idempotency across reruns).
+    const { data: existing } = await admin.from("stations").select("id").eq("name", st.name).maybeSingle();
+    if (existing) continue;
+    const { data: station, error: sErr } = await admin.from("stations").insert({
+      owner_id: adminId,
+      name: st.name, address: st.address, city: st.city,
+      lat: st.lat, lng: st.lng, amenities: st.amenities, photo_url: null,
+    }).select().single();
+    if (sErr) throw sErr;
+    for (const ch of st.chargers) {
+      const { data: charger, error: cErr } = await admin.from("chargers").insert({
+        station_id: station.id, label: ch.label, connector_type: ch.connector_type,
+        power_kw: ch.power_kw, price_per_kwh: ch.price_per_kwh, status: ch.status,
+      }).select().single();
+      if (cErr) throw cErr;
+      const rows = Array.from({ length: 7 }, (_, weekday) => ({
+        charger_id: charger.id, weekday, open_time: "06:00", close_time: "22:00",
+      }));
+      await admin.from("availability").insert(rows);
+      await admin.from("charger_state").upsert({ charger_id: charger.id, in_use: false, waiting: 0 });
+    }
+  }
+
+  const { count: opCount } = await admin.from("stations").select("id", { count: "exact", head: true }).eq("owner_id", operatorId);
+  const { count: adCount } = await admin.from("stations").select("id", { count: "exact", head: true }).eq("owner_id", adminId);
+  console.log(`Seed complete. Operator owns ${opCount} station(s). Admin owns ${adCount} unclaimed station(s).`);
 }
 
 main().catch((e) => { console.error(e); process.exit(1); });
