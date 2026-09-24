@@ -37,7 +37,7 @@ export default function DriverMapPage() {
   useEffect(() => {
     (async () => {
       const supabase = createClient();
-      const { data } = await supabase.from("stations").select("*, chargers(*)");
+      const { data } = await supabase.from("stations").select("*, chargers(*)").ilike("name", "PlugSpot%");
       setStations((data as St[]) ?? []);
       const { data: st } = await supabase.from("charger_state").select("*");
       const map: Record<string, ChargerState> = {};
@@ -136,18 +136,18 @@ export default function DriverMapPage() {
             if (s) setCenter({ lng: s.lng, lat: s.lat });
           }}
         />
-        <div className="pointer-events-none absolute inset-x-0 top-0 p-3 safe-top flex items-start justify-between gap-2">
+        <div className="pointer-events-none absolute inset-x-0 top-0 p-3 safe-top space-y-2">
           <div className="pointer-events-auto float px-3 py-2 flex items-center gap-2 text-xs">
-            <MapPin className="h-3.5 w-3.5 text-[var(--primary)]" />
-            <span className="font-medium">{location ? "Location set" : "Tap map to set your location"}</span>
-          </div>
-          <div className="pointer-events-auto flex gap-2">
-            <Button variant="outline" size="sm" onClick={() => setTapToPlace((v) => !v)}>
-              <Locate className="h-4 w-4" /> {tapToPlace ? "Cancel" : location ? "Move" : "Set location"}
-            </Button>
-            <Button variant="outline" size="sm" onClick={() => setFullscreen((v) => !v)}>
-              {fullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
-            </Button>
+            <MapPin className="h-3.5 w-3.5 text-[var(--primary)] flex-shrink-0" />
+            <span className="font-medium truncate">{location ? "Location set" : "Tap map to set your location"}</span>
+            <div className="ml-auto flex gap-1.5">
+              <Button variant="outline" size="sm" onClick={() => setTapToPlace((v) => !v)} className="h-8 px-2.5 text-[11px]">
+                <Locate className="h-3.5 w-3.5" /> {tapToPlace ? "Cancel" : location ? "Move" : "Set"}
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => setFullscreen((v) => !v)} className="h-8 w-8 px-0" aria-label="Toggle fullscreen">
+                {fullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+              </Button>
+            </div>
           </div>
         </div>
 
@@ -164,8 +164,8 @@ export default function DriverMapPage() {
                   <span className="font-semibold text-[var(--primary)]">{formatDurationMin(smart.savings)}</span> sooner.
                 </div>
                 <div className="mt-3 flex gap-2">
-                  <Link className="flex-1" href={`/driver/stations/${smart.best.s.id}`}>
-                    <Button size="sm" className="w-full"><Navigation2 className="h-4 w-4" /> Go there</Button>
+                  <Link className="flex-1" href={`/driver/navigate/station/${smart.best.s.id}`}>
+                    <Button size="sm" className="w-full"><Navigation2 className="h-4 w-4" /> Navigate</Button>
                   </Link>
                   <Link href={`/driver/stations/${smart.nearest.s.id}`}>
                     <Button size="sm" variant="outline">Keep nearest</Button>
@@ -222,37 +222,45 @@ export default function DriverMapPage() {
 
             <div className="space-y-2">
               {filtered.map(({ s, km, cheapest, waitMin, driveMin, ttsMin, waitingCount }) => (
-                <Link key={s.id} href={`/driver/stations/${s.id}`}>
-                  <Card className="p-3">
-                    <div className="flex items-start gap-3">
-                      <div className="h-9 w-9 rounded-full bg-[var(--primary-soft)] flex items-center justify-center flex-shrink-0">
-                        <Zap className="h-4 w-4 text-[var(--primary)]" />
-                      </div>
-                      <div className="flex-1 min-w-0">
+                <Card key={s.id} className="p-3">
+                  <div className="flex items-start gap-3">
+                    <div className="h-9 w-9 rounded-full bg-[var(--primary-soft)] flex items-center justify-center flex-shrink-0">
+                      <Zap className="h-4 w-4 text-[var(--primary)]" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <Link href={`/driver/stations/${s.id}`} className="block">
                         <div className="text-sm font-semibold truncate">{s.name}</div>
                         <div className="text-xs text-[var(--muted-foreground)] truncate">{s.address}</div>
-                        <div className="mt-1.5 flex flex-wrap items-center gap-2 text-xs">
-                          <StatusBadge status={s.chargers.some((c) => c.status === "online") ? "online" : "offline"} />
-                          {waitingCount > 0 && (
-                            <Badge tone="accent"><Users className="h-3 w-3" /> {waitingCount} waiting</Badge>
-                          )}
-                          {cheapest !== null && <span className="font-medium">from {pricePerKwh(cheapest)}</span>}
-                        </div>
-                      </div>
-                      <div className="text-right text-xs">
-                        {km !== null && <div className="font-semibold">{formatDistanceKm(km)}</div>}
-                        {ttsMin !== null && (
-                          <div className="mt-1 flex items-center justify-end gap-1 text-[var(--primary)] font-semibold">
-                            <Clock className="h-3 w-3" /> {formatDurationMin(ttsMin)}
-                          </div>
+                      </Link>
+                      <div className="mt-1.5 flex flex-wrap items-center gap-2 text-xs">
+                        <StatusBadge status={s.chargers.some((c) => c.status === "online") ? "online" : "offline"} />
+                        {waitingCount > 0 && (
+                          <Badge tone="accent"><Users className="h-3 w-3" /> {waitingCount} waiting</Badge>
                         )}
-                        {driveMin !== null && waitMin > 0 && (
-                          <div className="text-[10px] text-[var(--muted-foreground)] mt-0.5">drive {Math.round(driveMin)} + wait {Math.round(waitMin)}</div>
-                        )}
+                        {cheapest !== null && <span className="font-medium">from {pricePerKwh(cheapest)}</span>}
                       </div>
                     </div>
-                  </Card>
-                </Link>
+                    <div className="text-right text-xs">
+                      {km !== null && <div className="font-semibold">{formatDistanceKm(km)}</div>}
+                      {ttsMin !== null && (
+                        <div className="mt-1 flex items-center justify-end gap-1 text-[var(--primary)] font-semibold">
+                          <Clock className="h-3 w-3" /> {formatDurationMin(ttsMin)}
+                        </div>
+                      )}
+                      {driveMin !== null && waitMin > 0 && (
+                        <div className="text-[10px] text-[var(--muted-foreground)] mt-0.5">drive {Math.round(driveMin)} + wait {Math.round(waitMin)}</div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="mt-3 flex gap-2">
+                    <Link className="flex-1" href={`/driver/navigate/station/${s.id}`}>
+                      <Button size="sm" className="w-full"><Navigation2 className="h-4 w-4" /> Navigate</Button>
+                    </Link>
+                    <Link href={`/driver/stations/${s.id}`}>
+                      <Button size="sm" variant="outline">Details</Button>
+                    </Link>
+                  </div>
+                </Card>
               ))}
               {filtered.length === 0 && (
                 <Card><div className="text-sm text-[var(--muted-foreground)]">No stations match your filters.</div></Card>

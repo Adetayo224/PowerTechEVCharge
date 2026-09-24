@@ -1,5 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
 
+const iphone = devices["iPhone 14"];
+
 export default defineConfig({
   testDir: "./e2e",
   fullyParallel: false,
@@ -10,10 +12,17 @@ export default defineConfig({
       process.env.BASE_URL ||
       process.env.PLAYWRIGHT_BASE_URL ||
       "http://localhost:3000",
-    viewport: { width: 390, height: 844 },
+    viewport: iphone.viewport,
+    deviceScaleFactor: iphone.deviceScaleFactor,
+    isMobile: iphone.isMobile,
+    hasTouch: iphone.hasTouch,
+    userAgent: iphone.userAgent,
     trace: "retain-on-failure",
   },
   projects: [
-    { name: "mobile", use: { ...devices["iPhone 14"] } },
+    {
+      name: "mobile",
+      use: { browserName: "chromium", channel: "chrome" },
+    },
   ],
 });

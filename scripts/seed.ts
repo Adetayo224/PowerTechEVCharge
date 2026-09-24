@@ -15,7 +15,17 @@ if (!url || !secret) {
 
 const admin = createClient(url, secret, { auth: { persistSession: false } });
 
-const DRIVER = { email: "driver@demo.powertech.ng", password: "Demo1234!", full_name: "Ada Driver", role: "driver" as const };
+const DRIVER = {
+  email: "driver@demo.powertech.ng",
+  password: "Demo1234!",
+  full_name: "Ada Driver",
+  role: "driver" as const,
+  car_model: "Hyundai Kona Electric",
+  battery_kwh: 64,
+  efficiency_km_per_kwh: 5.6,
+  battery_percent: 62,
+  target_percent: 80,
+};
 const OPERATOR = { email: "operator@demo.powertech.ng", password: "Demo1234!", full_name: "Segun Operator", role: "operator" as const };
 
 type Connector = "CCS2" | "Type 2" | "CHAdeMO" | "GB/T";
@@ -163,6 +173,13 @@ async function main() {
 
   const operatorId = await ensureUser(OPERATOR.email, OPERATOR.password, OPERATOR.full_name, OPERATOR.role);
   const driverId = await ensureUser(DRIVER.email, DRIVER.password, DRIVER.full_name, DRIVER.role);
+  await admin.from("profiles").update({
+    car_model: DRIVER.car_model,
+    battery_kwh: DRIVER.battery_kwh,
+    efficiency_km_per_kwh: DRIVER.efficiency_km_per_kwh,
+    battery_percent: DRIVER.battery_percent,
+    target_percent: DRIVER.target_percent,
+  }).eq("id", driverId);
   console.log("Users ready", { operatorId, driverId });
 
   // Clean prior demo data owned by operator (cascades to chargers, availability, bookings, charger_state).

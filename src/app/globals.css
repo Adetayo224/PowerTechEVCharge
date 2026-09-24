@@ -179,6 +179,11 @@ html, body {
 .plug-station-marker:hover { transform: scale(1.06); }
 .maplibregl-ctrl-attrib { font-size: 10px; }
 
+/* Dark basemap: filter only the raster/vector canvas, keep markers and controls readable. */
+.plug-map-dark .maplibregl-canvas {
+  filter: invert(0.92) hue-rotate(200deg) brightness(0.95) contrast(0.95);
+}
+
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
 }

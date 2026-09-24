@@ -45,3 +45,7 @@ AGENTS.md
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# playwright artefacts
+/test-results
+/playwright-report

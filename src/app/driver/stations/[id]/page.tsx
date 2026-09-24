@@ -2,7 +2,7 @@
 import { use, useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "motion/react";
-import { MapPin, Navigation, Zap } from "lucide-react";
+import { MapPin, Navigation2, ExternalLink, Zap } from "lucide-react";
 import { Button, Card, Skeleton } from "@/components/ui";
 import { StatusBadge } from "@/components/status-badge";
 import { pricePerKwh } from "@/lib/utils";
@@ -47,10 +47,13 @@ export default function StationDetail({ params }: { params: Promise<{ id: string
           <MapPin className="h-5 w-5 text-[var(--primary)] mt-0.5" />
           <div className="flex-1">
             <div className="text-sm">{station.address}</div>
-            <div className="mt-2">
+            <div className="mt-3 flex flex-wrap gap-2">
+              <Link href={`/driver/navigate/station/${station.id}`}>
+                <Button size="sm"><Navigation2 className="h-4 w-4" /> Navigate</Button>
+              </Link>
               <a target="_blank" rel="noreferrer"
                 href={`https://www.google.com/maps/dir/?api=1&destination=${station.lat},${station.lng}`}>
-                <Button variant="outline" size="sm"><Navigation className="h-4 w-4" /> Open in Google Maps</Button>
+                <Button variant="outline" size="sm"><ExternalLink className="h-4 w-4" /> Open in Google Maps</Button>
               </a>
             </div>
           </div>

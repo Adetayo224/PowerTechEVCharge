@@ -1,14 +1,7 @@
 import type { Metadata, Viewport } from "next";
-import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { PwaRegister } from "@/components/pwa-register";
-
-const jakarta = Plus_Jakarta_Sans({
-  variable: "--font-jakarta",
-  subsets: ["latin"],
-  display: "swap",
-});
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://plugspot.samfredrobotics.com";
 
@@ -54,7 +47,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${jakarta.variable} h-full antialiased`}>
+    <html lang="en" suppressHydrationWarning className="h-full antialiased">
       <head>
         <script
           dangerouslySetInnerHTML={{

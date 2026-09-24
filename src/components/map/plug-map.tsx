@@ -1,9 +1,53 @@
 "use client";
-import { useEffect, useRef } from "react";
-import * as maplibregl from "maplibre-gl";
-import type { Map as MLMap, Marker as MLMarker } from "maplibre-gl";
-import "maplibre-gl/dist/maplibre-gl.css";
+import type { LineString } from "geojson";
+import { useEffect, useRef, useState } from "react";
+import Script from "next/script";
+import { Layers, Sun, Moon, Globe2, Mountain, Check } from "lucide-react";
 import { useTheme } from "@/components/theme-provider";
+
+// MapLibre GL is loaded from a CDN via <Script> at runtime. Bundling maplibre-gl
+// through Turbopack triggers a module-worker chain whose imports get rewritten
+// and then redirected, and browsers refuse Worker scripts that were redirected.
+// Loading the UMD build from a CDN sidesteps that entirely.
+
+type MaplibreGlobal = {
+  Map: new (options: Record<string, unknown>) => MLMapInstance;
+  Marker: new (options: Record<string, unknown>) => MLMarkerInstance;
+  NavigationControl: new (options?: Record<string, unknown>) => unknown;
+};
+
+type MLMapInstance = {
+  on: (event: string, handler: (e?: unknown) => void) => void;
+  once: (event: string, handler: () => void) => void;
+  addControl: (control: unknown, position?: string) => void;
+  remove: () => void;
+  setStyle: (style: string | Record<string, unknown>) => void;
+  easeTo: (options: Record<string, unknown>) => void;
+  getBearing: () => number;
+  getSource: (id: string) => { setData: (d: unknown) => void } | undefined;
+  addSource: (id: string, source: Record<string, unknown>) => void;
+  addLayer: (layer: Record<string, unknown>) => void;
+  getLayer: (id: string) => unknown;
+  removeLayer: (id: string) => void;
+  removeSource: (id: string) => void;
+  fitBounds: (bounds: [[number, number], [number, number]], options: Record<string, unknown>) => void;
+};
+
+type MLMarkerInstance = {
+  setLngLat: (coord: [number, number]) => MLMarkerInstance;
+  addTo: (map: MLMapInstance) => MLMarkerInstance;
+  remove: () => void;
+  getElement: () => HTMLElement;
+};
+
+declare global {
+  interface Window {
+    maplibregl?: MaplibreGlobal;
+  }
+}
+
+const MAPLIBRE_JS = "https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js";
+const MAPLIBRE_CSS = "https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css";
 
 export type MapStation = {
   id: string;
@@ -15,19 +59,50 @@ export type MapStation = {
   waiting?: number;
 };
 
-export type CarMarker = {
-  lng: number;
-  lat: number;
-  bearing?: number;
-};
+export type CarMarker = { lng: number; lat: number; bearing?: number };
+export type RouteLine = { geometry: LineString; bounds?: [number, number, number, number] };
+export type Basemap = "streets" | "dark" | "satellite" | "terrain";
 
-export type RouteLine = {
-  geometry: GeoJSON.LineString;
-  bounds?: [number, number, number, number];
-};
+const STREETS_URL = "https://tiles.openfreemap.org/styles/positron";
 
-const STYLE_LIGHT = "https://tiles.openfreemap.org/styles/positron";
-const STYLE_DARK = "https://tiles.openfreemap.org/styles/liberty";
+function rasterStyle(source: { tiles: string[]; attribution: string; maxzoom?: number }) {
+  return {
+    version: 8,
+    sources: {
+      raster: {
+        type: "raster",
+        tiles: source.tiles,
+        tileSize: 256,
+        maxzoom: source.maxzoom ?? 19,
+        attribution: source.attribution,
+      },
+    },
+    layers: [
+      { id: "background", type: "background", paint: { "background-color": "#e5e7eb" } },
+      { id: "raster", type: "raster", source: "raster" },
+    ],
+  } as unknown as Record<string, unknown>;
+}
+
+function styleFor(basemap: Basemap): string | Record<string, unknown> {
+  if (basemap === "satellite") {
+    return rasterStyle({
+      tiles: [
+        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+      ],
+      maxzoom: 19,
+      attribution: "© Esri, Maxar, Earthstar Geographics",
+    });
+  }
+  if (basemap === "terrain") {
+    return rasterStyle({
+      tiles: ["https://tile.opentopomap.org/{z}/{x}/{y}.png"],
+      maxzoom: 17,
+      attribution: "© OpenStreetMap contributors, © OpenTopoMap (CC BY SA)",
+    });
+  }
+  return STREETS_URL;
+}
 
 function stationMarkerEl(s: MapStation) {
   const wrap = document.createElement("div");
@@ -46,7 +121,7 @@ function stationMarkerEl(s: MapStation) {
 
 function carMarkerEl(bearing = 0) {
   const wrap = document.createElement("div");
-  wrap.style.cssText = "width:36px;height:36px;display:flex;align-items:center;justify-content:center;transform:rotate(" + bearing + "deg);transition:transform 250ms linear";
+  wrap.style.cssText = "width:36px;height:36px;display:flex;align-items:center;justify-content:center;transform:rotate(" + bearing + "deg);transition:transform 300ms linear";
   wrap.innerHTML = `
     <svg width="36" height="36" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
       <circle cx="18" cy="18" r="16" fill="#fff" stroke="#2F5BD3" stroke-width="2"/>
@@ -68,6 +143,8 @@ type Props = {
   route?: RouteLine | null;
   followCar?: boolean;
   className?: string;
+  showBasemapSwitcher?: boolean;
+  initialBasemap?: Basemap;
 };
 
 export default function PlugMap({
@@ -83,20 +160,27 @@ export default function PlugMap({
   route,
   followCar = false,
   className,
+  showBasemapSwitcher = true,
+  initialBasemap,
 }: Props) {
   const ref = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<MLMap | null>(null);
-  const stationMarkersRef = useRef<Map<string, MLMarker>>(new Map());
-  const carMarkerRef = useRef<MLMarker | null>(null);
+  const mapRef = useRef<MLMapInstance | null>(null);
+  const stationMarkersRef = useRef<Map<string, MLMarkerInstance>>(new Map());
+  const carMarkerRef = useRef<MLMarkerInstance | null>(null);
   const carElRef = useRef<HTMLElement | null>(null);
   const styleReadyRef = useRef(false);
+  const [ready, setReady] = useState<boolean>(typeof window !== "undefined" && !!window.maplibregl);
   const { resolved } = useTheme();
+  const [basemap, setBasemap] = useState<Basemap>(initialBasemap ?? (resolved === "dark" ? "dark" : "streets"));
+  const [switcherOpen, setSwitcherOpen] = useState(false);
 
+  // Init once maplibregl is on window
   useEffect(() => {
-    if (!ref.current || mapRef.current) return;
-    const map = new maplibregl.Map({
+    if (!ready || !ref.current || mapRef.current || typeof window === "undefined" || !window.maplibregl) return;
+    const ml = window.maplibregl;
+    const map = new ml.Map({
       container: ref.current,
-      style: resolved === "dark" ? STYLE_DARK : STYLE_LIGHT,
+      style: styleFor(basemap),
       center: [center?.lng ?? 3.4735, center?.lat ?? 6.4396],
       zoom,
       bearing,
@@ -105,9 +189,13 @@ export default function PlugMap({
       attributionControl: { compact: true },
     });
     mapRef.current = map;
-    map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), "top-right");
+    map.addControl(new ml.NavigationControl({ visualizePitch: true }), "bottom-right");
     map.on("load", () => { styleReadyRef.current = true; });
-    if (onMapClick) map.on("click", (e) => onMapClick(e.lngLat.lng, e.lngLat.lat));
+    map.on("error", (e: unknown) => { const err = e as { error?: { message?: string } }; console.warn("[map]", err?.error?.message ?? err); });
+    if (onMapClick) map.on("click", (e: unknown) => {
+      const evt = e as { lngLat: { lng: number; lat: number } };
+      onMapClick(evt.lngLat.lng, evt.lngLat.lat);
+    });
     return () => {
       map.remove();
       mapRef.current = null;
@@ -116,23 +204,28 @@ export default function PlugMap({
       carMarkerRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [ready]);
 
-  // Theme swap
+  // Theme sync
   useEffect(() => {
-    const map = mapRef.current;
-    if (!map) return;
-    map.setStyle(resolved === "dark" ? STYLE_DARK : STYLE_LIGHT);
-    styleReadyRef.current = false;
-    map.once("styledata", () => {
-      styleReadyRef.current = true;
-      // Reapply route after style swap
-      if (route) applyRoute(map, route);
-    });
+    if (basemap === "satellite" || basemap === "terrain") return;
+    setBasemap(resolved === "dark" ? "dark" : "streets");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resolved]);
 
-  // Camera updates
+  // Style swap
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    styleReadyRef.current = false;
+    map.setStyle(styleFor(basemap));
+    map.once("styledata", () => {
+      styleReadyRef.current = true;
+      if (route) applyRoute(map, route);
+    });
+  }, [basemap]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Camera
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
@@ -143,29 +236,19 @@ export default function PlugMap({
   // Station markers
   useEffect(() => {
     const map = mapRef.current;
-    if (!map) return;
+    const ml = typeof window !== "undefined" ? window.maplibregl : undefined;
+    if (!map || !ml) return;
     const existing = stationMarkersRef.current;
     const nextIds = new Set(stations.map((s) => s.id));
-    // Remove stale
     for (const [id, marker] of existing) {
-      if (!nextIds.has(id)) {
-        marker.remove();
-        existing.delete(id);
-      }
+      if (!nextIds.has(id)) { marker.remove(); existing.delete(id); }
     }
-    // Add / update
     for (const s of stations) {
       const el = stationMarkerEl(s);
       if (onStationClick) el.addEventListener("click", (e) => { e.stopPropagation(); onStationClick(s.id); });
-      const existingMarker = existing.get(s.id);
-      if (existingMarker) {
-        existingMarker.getElement().replaceWith(el);
-        existingMarker.setLngLat([s.lng, s.lat]);
-        // Replace internal element reference (hacky but works: recreate)
-        existingMarker.remove();
-        existing.delete(s.id);
-      }
-      const m = new maplibregl.Marker({ element: el }).setLngLat([s.lng, s.lat]).addTo(map);
+      const prior = existing.get(s.id);
+      if (prior) { prior.remove(); existing.delete(s.id); }
+      const m = new ml.Marker({ element: el }).setLngLat([s.lng, s.lat]).addTo(map);
       existing.set(s.id, m);
     }
   }, [stations, onStationClick]);
@@ -173,12 +256,13 @@ export default function PlugMap({
   // Car marker
   useEffect(() => {
     const map = mapRef.current;
-    if (!map) return;
+    const ml = typeof window !== "undefined" ? window.maplibregl : undefined;
+    if (!map || !ml) return;
     if (car) {
       if (!carMarkerRef.current) {
         const el = carMarkerEl(car.bearing ?? 0);
         carElRef.current = el;
-        carMarkerRef.current = new maplibregl.Marker({ element: el }).setLngLat([car.lng, car.lat]).addTo(map);
+        carMarkerRef.current = new ml.Marker({ element: el }).setLngLat([car.lng, car.lat]).addTo(map);
       } else {
         carMarkerRef.current.setLngLat([car.lng, car.lat]);
         if (carElRef.current) carElRef.current.style.transform = `rotate(${car.bearing ?? 0}deg)`;
@@ -202,13 +286,73 @@ export default function PlugMap({
     else map.once("styledata", apply);
   }, [route]);
 
-  return <div ref={ref} className={className ?? "h-full w-full"} />;
+  const isDarkOverlay = basemap === "dark";
+
+  return (
+    <div className={className ?? "relative h-full w-full"} style={{ position: "relative", minHeight: 200 }}>
+      <link rel="stylesheet" href={MAPLIBRE_CSS} />
+      <Script
+        src={MAPLIBRE_JS}
+        strategy="afterInteractive"
+        onLoad={() => setReady(true)}
+      />
+      <div
+        ref={ref}
+        className={"absolute inset-0" + (isDarkOverlay ? " plug-map-dark" : "")}
+      />
+      {showBasemapSwitcher && (
+        <div className="absolute bottom-3 left-3 z-10">
+          <div className="relative">
+            <button
+              onClick={() => setSwitcherOpen((v) => !v)}
+              className="h-9 w-9 rounded-lg bg-white text-[#111827] border border-[#E5E7EB] shadow-sm flex items-center justify-center hover:bg-[#F7F8FA]"
+              aria-label="Choose basemap"
+            >
+              <Layers className="h-4 w-4" />
+            </button>
+            {switcherOpen && (
+              <div className="absolute bottom-11 left-0 min-w-[168px] rounded-xl bg-white border border-[#E5E7EB] shadow-lg overflow-hidden">
+                {(["streets", "dark", "satellite", "terrain"] as Basemap[]).map((b) => {
+                  const Icon = BASEMAP_ICON[b];
+                  const active = basemap === b;
+                  return (
+                    <button
+                      key={b}
+                      onClick={() => { setBasemap(b); setSwitcherOpen(false); }}
+                      className={`w-full h-10 px-3 flex items-center gap-2 text-sm text-left ${active ? "bg-[#EEF2FB] text-[#2F5BD3]" : "text-[#111827] hover:bg-[#F7F8FA]"}`}
+                    >
+                      <Icon className="h-4 w-4" />
+                      <span className="flex-1 font-medium">{BASEMAP_LABEL[b]}</span>
+                      {active && <Check className="h-4 w-4" />}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
-function applyRoute(map: MLMap, route: RouteLine) {
+const BASEMAP_LABEL: Record<Basemap, string> = {
+  streets: "Streets",
+  dark: "Dark",
+  satellite: "Satellite",
+  terrain: "Terrain",
+};
+const BASEMAP_ICON: Record<Basemap, typeof Sun> = {
+  streets: Sun,
+  dark: Moon,
+  satellite: Globe2,
+  terrain: Mountain,
+};
+
+function applyRoute(map: MLMapInstance, route: RouteLine) {
   const id = "plugspot-route";
   const geojson = { type: "Feature" as const, properties: {}, geometry: route.geometry };
-  const src = map.getSource(id) as maplibregl.GeoJSONSource | undefined;
+  const src = map.getSource(id);
   if (src) {
     src.setData(geojson);
   } else {
@@ -230,11 +374,13 @@ function applyRoute(map: MLMap, route: RouteLine) {
   }
   if (route.bounds) {
     const [minLng, minLat, maxLng, maxLat] = route.bounds;
-    map.fitBounds([[minLng, minLat], [maxLng, maxLat]], { padding: 60, duration: 400 });
+    try {
+      map.fitBounds([[minLng, minLat], [maxLng, maxLat]], { padding: 60, duration: 400 });
+    } catch { /* noop */ }
   }
 }
 
-function clearRoute(map: MLMap) {
+function clearRoute(map: MLMapInstance) {
   const id = "plugspot-route";
   if (map.getLayer(id)) map.removeLayer(id);
   if (map.getLayer(id + "-casing")) map.removeLayer(id + "-casing");

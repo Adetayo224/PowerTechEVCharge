@@ -1,5 +1,6 @@
 "use client";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { createClient } from "@/lib/supabase/browser";
 
 export type DriverLocation = { lng: number; lat: number; bearing?: number };
 export type DriverVehicle = {
@@ -36,9 +37,27 @@ export function DriverProvider({ children }: { children: React.ReactNode }) {
     try {
       const l = sessionStorage.getItem("plugspot.location");
       if (l) setLocationState(JSON.parse(l));
-      const v = sessionStorage.getItem("plugspot.vehicle");
-      if (v) setVehicleState({ ...DEFAULT_VEHICLE, ...JSON.parse(v) });
     } catch {}
+    // Load vehicle from the driver's profile so it reflects saved settings.
+    (async () => {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data } = await supabase
+        .from("profiles")
+        .select("car_model, battery_kwh, efficiency_km_per_kwh, battery_percent, target_percent")
+        .eq("id", user.id)
+        .maybeSingle();
+      if (!data) return;
+      const merged: DriverVehicle = {
+        model: data.car_model || DEFAULT_VEHICLE.model,
+        batteryKwh: Number(data.battery_kwh) || DEFAULT_VEHICLE.batteryKwh,
+        efficiencyKmPerKwh: Number(data.efficiency_km_per_kwh) || DEFAULT_VEHICLE.efficiencyKmPerKwh,
+        batteryPercent: typeof data.battery_percent === "number" ? data.battery_percent : DEFAULT_VEHICLE.batteryPercent,
+        targetPercent: typeof data.target_percent === "number" ? data.target_percent : DEFAULT_VEHICLE.targetPercent,
+      };
+      setVehicleState(merged);
+    })();
   }, []);
 
   const setLocation = useCallback((l: DriverLocation | null) => {

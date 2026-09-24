@@ -12,7 +12,7 @@
     "test:e2e": "playwright test",
     "seed": "tsx --env-file=.env.local scripts/seed.ts",
     "test:email": "tsx --env-file=.env.local scripts/test-email.ts",
-    "db:push": "psql \"$SUPABASE_DB_URL\" -f supabase/migrations/0001_init.sql && psql \"$SUPABASE_DB_URL\" -f supabase/migrations/0002_rls.sql && psql \"$SUPABASE_DB_URL\" -f supabase/migrations/0003_charger_state.sql"
+    "db:push": "psql \"$SUPABASE_DB_URL\" -f supabase/migrations/0001_init.sql && psql \"$SUPABASE_DB_URL\" -f supabase/migrations/0002_rls.sql && psql \"$SUPABASE_DB_URL\" -f supabase/migrations/0003_charger_state.sql && psql \"$SUPABASE_DB_URL\" -f supabase/migrations/0004_fix_booking.sql"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
@@ -22,7 +22,6 @@
     "date-fns": "^4.4.0",
     "date-fns-tz": "^3.2.0",
     "lucide-react": "^1.47.0",
-    "maplibre-gl": "^6.11.1",
     "motion": "^13.4.1",
     "next": "16.3.6",
     "qrcode": "^1.5.4",
@@ -35,6 +34,7 @@
   "devDependencies": {
     "@playwright/test": "^1.63.0",
     "@tailwindcss/postcss": "^4",
+    "@types/geojson": "^7946.0.16",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

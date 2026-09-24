@@ -1,3 +1,4 @@
+import type { LineString } from "geojson";
 export type LngLat = { lng: number; lat: number };
 
 export function haversineKm(a: LngLat, b: LngLat) {
@@ -36,7 +37,7 @@ export function formatDistanceKm(km: number) {
 export type OSRMRoute = {
   distanceKm: number;
   durationMin: number;
-  geometry: GeoJSON.LineString;
+  geometry: LineString;
   steps: OSRMStep[];
   bounds: [number, number, number, number];
 };
@@ -51,7 +52,7 @@ export type OSRMStep = {
     location: [number, number];
     bearing_after?: number;
   };
-  geometry: GeoJSON.LineString;
+  geometry: LineString;
 };
 
 const OSRM = "https://router.project-osrm.org";
@@ -83,7 +84,7 @@ export async function fetchOSRMRoute(from: LngLat, to: LngLat): Promise<OSRMRout
           location: [number, number];
           bearing_after?: number;
         };
-        geometry: GeoJSON.LineString;
+        geometry: LineString;
       }) => ({
         distance: s.distance,
         duration: s.duration,
@@ -137,7 +138,7 @@ function boundsFor(coords: number[][]): [number, number, number, number] {
 
 // Interpolate along a LineString to a target distance (metres).
 // Returns { lng, lat, bearing, doneMetres, finished }.
-export function positionAlongRoute(geometry: GeoJSON.LineString, distanceMetres: number) {
+export function positionAlongRoute(geometry: LineString, distanceMetres: number) {
   const coords = geometry.coordinates as [number, number][];
   let acc = 0;
   for (let i = 0; i < coords.length - 1; i++) {

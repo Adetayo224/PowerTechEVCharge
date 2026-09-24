@@ -23,7 +23,7 @@ async function setTheme(page: Page, theme: "light" | "dark") {
 async function signIn(page: Page) {
   await page.goto("/sign-in");
   await page.getByLabel("Email").fill(DRIVER.email);
-  await page.getByLabel("Password").fill(DRIVER.password);
+  await page.locator("input#password").fill(DRIVER.password);
   await page.getByRole("button", { name: /sign in/i }).click();
   await page.waitForURL(/\/driver\/home/, { timeout: 20_000 });
 }
